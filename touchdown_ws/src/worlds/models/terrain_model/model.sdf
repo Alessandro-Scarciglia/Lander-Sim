@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+<sdf version="1.7">
+  <model name="terrain_model">
+    <static>true</static>
+
+    <link name="link">
+
+      <!-- Visual: mesh dettagliata -->
+      <visual name="visual">
+        <geometry>
+          <mesh>
+            <uri>model://terrain_model/meshes/moon_1.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+
+      <!-- Collision: stessa mesh -->
+      <collision name="collision">
+        <geometry>
+          <mesh>
+            <uri>model://terrain_model/meshes/moon_1.stl</uri>
+          </mesh>
+        </geometry>
+      </collision>
+
+    </link>
+  </model>
+</sdf>

@@ -1,0 +1,118 @@
+<?xml version="1.0" ?>
+<sdf version="1.7">
+  <model name="lander_model">
+    <static>false</static>
+    <self_collide>false</self_collide>
+
+    <!-- ================= BODY ================= -->
+    <include>
+      <uri>model://lander_model/body</uri>
+      <name>body_instance</name>
+    </include>
+
+    <!-- ================= LEGS ================= -->
+    <include>
+      <uri>model://lander_model/leg</uri>
+      <name>leg1</name>
+      <pose relative_to="body_instance::body_link">0.45 0.45 -0.5 0 0 0</pose>
+    </include>
+
+    <include>
+      <uri>model://lander_model/leg</uri>
+      <name>leg2</name>
+      <pose relative_to="body_instance::body_link">-0.45 0.45 -0.5 0 0 0</pose>
+    </include>
+
+    <include>
+      <uri>model://lander_model/leg</uri>
+      <name>leg3</name>
+      <pose relative_to="body_instance::body_link">-0.45 -0.45 -0.5 0 0 0</pose>
+    </include>
+
+    <include>
+      <uri>model://lander_model/leg</uri>
+      <name>leg4</name>
+      <pose relative_to="body_instance::body_link">0.45 -0.45 -0.5 0 0 0</pose>
+    </include>
+
+    <!-- ================= JOINT TEMPLATE ================= -->
+    <!-- Rigidità aumentata per evitare attraversamenti -->
+
+    <joint name="leg1_joint" type="prismatic">
+      <parent>body_instance::body_link</parent>
+      <child>leg1::leg_link</child>
+      <axis>
+        <xyz>0 0 -1</xyz>
+        <limit>
+          <lower>0</lower>
+          <upper>0.1</upper>
+          <effort>500</effort>
+          <velocity>2</velocity>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>5000</spring_stiffness>
+          <damping>200</damping>
+        </dynamics>
+      </axis>
+    </joint>
+
+    <joint name="leg2_joint" type="prismatic">
+      <parent>body_instance::body_link</parent>
+      <child>leg2::leg_link</child>
+      <axis>
+        <xyz>0 0 -1</xyz>
+        <limit>
+          <lower>0</lower>
+          <upper>0.1</upper>
+          <effort>500</effort>
+          <velocity>2</velocity>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>5000</spring_stiffness>
+          <damping>200</damping>
+        </dynamics>
+      </axis>
+    </joint>
+
+    <joint name="leg3_joint" type="prismatic">
+      <parent>body_instance::body_link</parent>
+      <child>leg3::leg_link</child>
+      <axis>
+        <xyz>0 0 -1</xyz>
+        <limit>
+          <lower>0</lower>
+          <upper>0.1</upper>
+          <effort>500</effort>
+          <velocity>2</velocity>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>5000</spring_stiffness>
+          <damping>200</damping>
+        </dynamics>
+      </axis>
+    </joint>
+
+    <joint name="leg4_joint" type="prismatic">
+      <parent>body_instance::body_link</parent>
+      <child>leg4::leg_link</child>
+      <axis>
+        <xyz>0 0 -1</xyz>
+        <limit>
+          <lower>0</lower>
+          <upper>0.1</upper>
+          <effort>500</effort>
+          <velocity>2</velocity>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>5000</spring_stiffness>
+          <damping>200</damping>
+        </dynamics>
+      </axis>
+    </joint>
+
+  </model>
+</sdf>

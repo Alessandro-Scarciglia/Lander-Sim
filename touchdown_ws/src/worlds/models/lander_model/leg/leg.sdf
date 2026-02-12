@@ -1,0 +1,76 @@
+<?xml version="1.0" ?>
+<sdf version="1.7">
+  <model name="leg">
+    <static>false</static>
+    <self_collide>false</self_collide>
+
+    <link name="leg_link">
+      <pose>0 0 0 0 0 0</pose>
+
+      <!-- ================= INERTIAL ================= -->
+      <inertial>
+        <mass>5.0</mass>
+        <!-- Inerzia coerente con cilindro -->
+        <inertia>
+          <ixx>0.038</ixx>
+          <iyy>0.038</iyy>
+          <izz>0.006</izz>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyz>0</iyz>
+        </inertia>
+      </inertial>
+
+      <!-- ================= VISUAL ================= -->
+      <visual name="leg_visual">
+        <geometry>
+          <cylinder>
+            <radius>0.05</radius>
+            <length>0.6</length>
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.3 0.3 0.3 1</ambient>
+          <diffuse>0.3 0.3 0.3 1</diffuse>
+        </material>
+      </visual>
+
+      <!-- ================= COLLISION ================= -->
+      <collision name="leg_collision">
+        <geometry>
+          <!-- Collision leggermente semplificata per stabilità -->
+          <cylinder>
+            <radius>0.055</radius>
+            <length>0.6</length>
+          </cylinder>
+        </geometry>
+
+        <surface>
+          <contact>
+            <ode>
+              <kp>20000</kp>
+              <kd>200</kd>
+              <max_vel>0.1</max_vel>
+              <min_depth>0.001</min_depth>
+            </ode>
+          </contact>
+
+          <friction>
+            <ode>
+              <mu>0.8</mu>
+              <mu2>0.8</mu2>
+            </ode>
+          </friction>
+
+          <bounce>
+            <restitution_coefficient>0.0</restitution_coefficient>
+            <threshold>1.0</threshold>
+          </bounce>
+        </surface>
+
+        <max_contacts>10</max_contacts>
+      </collision>
+
+    </link>
+  </model>
+</sdf>
