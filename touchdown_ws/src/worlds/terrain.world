@@ -29,7 +29,7 @@
         <visual name='visual'>
           <geometry>
             <mesh>
-              <uri>model://terrain_model/meshes/moon_1.stl</uri>
+              <uri>model://terrain_model/meshes/moon_0.stl</uri>
               <scale>1 1 1</scale>
             </mesh>
           </geometry>
@@ -37,7 +37,7 @@
         <collision name='collision'>
           <geometry>
             <mesh>
-              <uri>model://terrain_model/meshes/moon_1.stl</uri>
+              <uri>model://terrain_model/meshes/moon_0.stl</uri>
               <scale>1 1 1</scale>
             </mesh>
           </geometry>
