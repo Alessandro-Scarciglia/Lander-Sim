@@ -30,7 +30,7 @@ docker compose exec touchdown-sim bash
 ```
 Launch the .world file in Gazebo.
 ```
-gazebo src/worlds/terrain.world
+gazebo src/worlds/landing_site.world
 ```
 (Additional Info) If new terrain models (.stl) have been included in the CAD folder, they shall be copied inside the container. The placeholder <name> in the source path shall be substituted by the filename (e.g. QLSx.stl).
 ```
