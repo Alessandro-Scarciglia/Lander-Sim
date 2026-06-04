@@ -1,4 +1,4 @@
-<?xml version="1.0" ?>
+<?xml version="1.0"?>
 <sdf version="1.7">
   <model name="lander_model">
     <static>false</static>
@@ -10,108 +10,63 @@
       <name>body_instance</name>
     </include>
 
+    <!-- ================= PASSENGER ================= -->
+    <include>
+      <uri>model://lander_model/passenger</uri>
+      <name>passenger</name>
+      <pose>0 0 2.464 0 0 0</pose>
+    </include>
+
     <!-- ================= LEGS ================= -->
     <include>
-      <uri>model://lander_model/leg</uri>
+      <uri>model://lander_model/leg1</uri>
       <name>leg1</name>
-      <pose relative_to="body_instance::body_link">0.45 0.45 -0.5 0 0 0</pose>
+      <pose relative_to="body_instance::body_link">1.414 1.414 0.6 0.523 -0.523 0</pose>
     </include>
 
     <include>
-      <uri>model://lander_model/leg</uri>
+      <uri>model://lander_model/leg2</uri>
       <name>leg2</name>
-      <pose relative_to="body_instance::body_link">-0.45 0.45 -0.5 0 0 0</pose>
+      <pose relative_to="body_instance::body_link">-1.414 1.414 0.6 0.523 0.523 0</pose>
     </include>
 
     <include>
-      <uri>model://lander_model/leg</uri>
+      <uri>model://lander_model/leg3</uri>
       <name>leg3</name>
-      <pose relative_to="body_instance::body_link">-0.45 -0.45 -0.5 0 0 0</pose>
+      <pose relative_to="body_instance::body_link">-1.414 -1.414 0.6 -0.523 0.523 0</pose>
     </include>
 
     <include>
-      <uri>model://lander_model/leg</uri>
+      <uri>model://lander_model/leg4</uri>
       <name>leg4</name>
-      <pose relative_to="body_instance::body_link">0.45 -0.45 -0.5 0 0 0</pose>
+      <pose relative_to="body_instance::body_link">1.414 -1.414 0.6 -0.523 -0.523 0</pose>
     </include>
 
     <!-- ================= JOINT TEMPLATE ================= -->
     <!-- Rigidità aumentata per evitare attraversamenti -->
-
-    <joint name="leg1_joint" type="prismatic">
+    <joint name="payload_interface_joint" type="fixed">
       <parent>body_instance::body_link</parent>
-      <child>leg1::leg_link</child>
-      <axis>
-        <xyz>0 0 -1</xyz>
-        <limit>
-          <lower>0</lower>
-          <upper>0.1</upper>
-          <effort>500</effort>
-          <velocity>2</velocity>
-        </limit>
-        <dynamics>
-          <spring_reference>0</spring_reference>
-          <spring_stiffness>5000</spring_stiffness>
-          <damping>200</damping>
-        </dynamics>
-      </axis>
+      <child>passenger::passenger_link</child>
     </joint>
 
-    <joint name="leg2_joint" type="prismatic">
+    <joint name="leg1_joint" type="fixed">
       <parent>body_instance::body_link</parent>
-      <child>leg2::leg_link</child>
-      <axis>
-        <xyz>0 0 -1</xyz>
-        <limit>
-          <lower>0</lower>
-          <upper>0.1</upper>
-          <effort>500</effort>
-          <velocity>2</velocity>
-        </limit>
-        <dynamics>
-          <spring_reference>0</spring_reference>
-          <spring_stiffness>5000</spring_stiffness>
-          <damping>200</damping>
-        </dynamics>
-      </axis>
+      <child>leg1::main_strut</child>
     </joint>
 
-    <joint name="leg3_joint" type="prismatic">
+    <joint name="leg2_joint" type="fixed">
       <parent>body_instance::body_link</parent>
-      <child>leg3::leg_link</child>
-      <axis>
-        <xyz>0 0 -1</xyz>
-        <limit>
-          <lower>0</lower>
-          <upper>0.1</upper>
-          <effort>500</effort>
-          <velocity>2</velocity>
-        </limit>
-        <dynamics>
-          <spring_reference>0</spring_reference>
-          <spring_stiffness>5000</spring_stiffness>
-          <damping>200</damping>
-        </dynamics>
-      </axis>
+      <child>leg2::main_strut</child>
     </joint>
 
-    <joint name="leg4_joint" type="prismatic">
+    <joint name="leg3_joint" type="fixed">
       <parent>body_instance::body_link</parent>
-      <child>leg4::leg_link</child>
-      <axis>
-        <xyz>0 0 -1</xyz>
-        <limit>
-          <lower>0</lower>
-          <upper>0.1</upper>
-          <effort>500</effort>
-          <velocity>2</velocity>
-        </limit>
-        <dynamics>
-          <spring_reference>0</spring_reference>
-          <spring_stiffness>5000</spring_stiffness>
-          <damping>200</damping>
-        </dynamics>
-      </axis>
+      <child>leg3::main_strut</child>
+    </joint>
+
+    <joint name="leg4_joint" type="fixed">
+      <parent>body_instance::body_link</parent>
+      <child>leg4::main_strut</child>
     </joint>
 
   </model>

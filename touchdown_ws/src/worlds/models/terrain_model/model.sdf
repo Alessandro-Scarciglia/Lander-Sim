@@ -1,4 +1,4 @@
-<?xml version="1.0" ?>
+<?xml version="1.0"?>
 <sdf version="1.7">
   <model name="terrain_model">
     <static>true</static>
@@ -21,6 +21,7 @@
             <uri>model://terrain_model/meshes/moon_1.stl</uri>
           </mesh>
         </geometry>
+
       </collision>
 
     </link>

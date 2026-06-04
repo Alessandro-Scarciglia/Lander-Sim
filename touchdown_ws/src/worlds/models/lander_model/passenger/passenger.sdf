@@ -1,0 +1,65 @@
+<?xml version="1.0" ?>
+<sdf version="1.7">
+  <model name="passenger">
+    <link name="passenger_link">
+      
+      <!-- INERZIA, MASSA, COG -->
+      <inertial>
+        <mass>1275.00000</mass>
+        <!-- CoG locale rispetto a RF2 -->
+        <pose>-0.05000 -0.05000 0.00000 0 0 0</pose> 
+        <inertia>
+          <ixx>1380.00000</ixx>
+          <iyy>1380.00000</iyy>
+          <izz>2550.00000</izz>
+          <ixy>0.00000</ixy>
+          <ixz>0.00000</ixz>
+          <iyz>0.00000</iyz>
+        </inertia>
+      </inertial>
+
+      <!-- PARTE VISIVA -->
+      <visual name="passenger_visual">
+        <geometry>
+          <mesh>            
+            <uri>model://lander_model/meshes/passenger.stl</uri>
+            <scale>1 1 1</scale>
+          </mesh>
+        </geometry>        
+      </visual>
+
+      <!-- PARTE DI COLLISIONE -->
+      <collision name="passenger_collision">
+        <geometry>
+          <mesh>
+            <uri>model://lander_model/meshes/passenger.stl</uri>
+            <scale>1 1 1</scale>
+          </mesh>
+        </geometry>
+        <surface>
+          <contact>
+            <ode>
+              <kp>100000000.0</kp>
+              <kd>100000.0</kd>
+              <max_vel>0.1</max_vel>
+              <min_depth>0.01</min_depth>
+            </ode>
+          </contact>
+          <friction>
+            <ode>
+              <mu>1.0</mu>
+              <mu2>1.0</mu2>
+            </ode>
+          </friction>
+
+          <bounce>
+            <restitution_coefficient>0.0</restitution_coefficient>
+            <threshold>1.0</threshold>
+          </bounce>
+        </surface>
+        <max_contacts>20</max_contacts>
+      </collision>
+
+    </link>
+  </model>
+</sdf>

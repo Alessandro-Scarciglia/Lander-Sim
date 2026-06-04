@@ -1,0 +1,149 @@
+<?xml version="1.0"?>
+<sdf version="1.7">
+  <model name="leg4">
+    <static>false</static>
+    <self_collide>false</self_collide>
+
+    <link name="main_strut">
+      <pose>0 0 0 0 0 0</pose>
+      <inertial>
+        <mass>25.0</mass>
+        <inertia>
+          <ixx>1.35</ixx> <iyy>1.35</iyy> <izz>0.12</izz>
+          <ixy>0.0</ixy> <ixz>0.0</ixz> <iyz>0.0</iyz>
+        </inertia>
+      </inertial>
+
+      <visual name="strut_visual">
+        <pose>0 0 -0.3 0 0 0</pose> <geometry>
+          <cylinder>
+            <radius>0.08</radius>
+            <length>0.6</length> </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.4 0.4 0.4 1</ambient>
+          <diffuse>0.4 0.4 0.4 1</diffuse>
+        </material>
+      </visual>
+
+      <collision name="strut_collision">
+        <pose>0 0 -0.3 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.08</radius>
+            <length>0.6</length>
+          </cylinder>
+        </geometry>
+      </collision>
+    </link>
+
+    <link name="piston_foot">
+      <pose>0 0 -0.5 0 0 0</pose> 
+      <inertial>
+        <mass>25.0</mass>
+        <inertia>
+          <ixx>1.44</ixx> <iyy>1.44</iyy> <izz>0.13</izz>
+          <ixy>0.0</ixy> <ixz>0.0</ixz> <iyz>0.0</iyz>
+        </inertia>
+      </inertial>
+
+      <visual name="piston_visual">
+        <pose>0 0 -0.2 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.05</radius>
+            <length>0.7</length> </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.7 0.7 0.7 1</ambient>
+          <diffuse>0.7 0.7 0.7 1</diffuse>
+        </material>
+      </visual>
+
+      <visual name="footpad_visual">
+        <pose>0 0 -0.55 0.523 0.523 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.25</radius> 
+            <length>0.05</length> 
+          </cylinder>
+        </geometry>
+        <material>
+          <ambient>0.2 0.2 0.2 1</ambient>
+          <diffuse>0.2 0.2 0.2 1</diffuse>
+        </material>
+      </visual>
+
+      <collision name="piston_collision">
+        <pose>0 0 -0.2 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.05</radius>
+            <length>0.7</length>
+          </cylinder>
+        </geometry>
+      </collision>
+
+      <collision name="foot_collision">
+        <pose>0 0 -0.55 0.523 0.523 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.25</radius>
+            <length>0.05</length>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode>
+              <kp>10000000.0</kp>
+              <kd>100000.0</kd>
+              <max_vel>1.0</max_vel>
+              <min_depth>0.005</min_depth>
+            </ode>
+          </contact>
+          <friction>
+            <ode>
+              <mu>1.0</mu>
+              <mu2>1.0</mu2>
+            </ode>
+          </friction>
+        </surface>
+        <max_contacts>10</max_contacts>
+      </collision>
+
+      <sensor name="foot_contact_sensor" type="contact">
+        <always_on>true</always_on>
+        <update_rate>50.0</update_rate>
+        <contact>
+          <collision>foot_collision</collision>
+        </contact>
+        <plugin name="foot_bumper_4" filename="libgazebo_ros_bumper.so">
+          <ros>
+            <remapping>bumper_states:=/lander/contact_forces</remapping>
+          </ros>
+          <frame_name>world</frame_name>
+        </plugin>
+      </sensor>
+    </link>
+
+    <joint name="shock_absorber_joint" type="prismatic">
+      <parent>main_strut</parent>
+      <child>piston_foot</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>0.0</lower>
+          <upper>0.45</upper>
+          <effort>150000.0</effort>
+          <velocity>10.0</velocity>
+        </limit>
+        <dynamics>
+          <spring_reference>0.0</spring_reference>
+          <spring_stiffness>120000.0</spring_stiffness> 
+          <damping>18000.0</damping>                     
+        </dynamics>
+      </axis>
+    </joint>
+
+  </model>
+</sdf>

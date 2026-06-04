@@ -1,4 +1,4 @@
-<?xml version="1.0" ?>
+<?xml version="1.0"?>
 <sdf version="1.7">
   <model name="body">
     <static>false</static>
@@ -9,26 +9,28 @@
 
       <!-- ================= INERTIAL ================= -->
       <inertial>
-        <mass>50.0</mass>
+        <mass>2533.53149</mass>
 
-        <!-- Inerzia coerente con box 1 x 1 x 0.5 -->
-        <!-- Ixx = 1/12 m (y² + z²) ecc -->
+        <!-- CoG -->
+        <pose>-0.01866 0.03947 0.89114 0 0 0</pose>
+
         <inertia>
-          <ixx>5.208</ixx>
-          <iyy>5.208</iyy>
-          <izz>8.333</izz>
-          <ixy>0</ixy>
-          <ixz>0</ixz>
-          <iyz>0</iyz>
+          <ixx>4886.16109</ixx>
+          <iyy>4816.25500</iyy>
+          <izz>4190.93543</izz>
+          <ixy>-302.12891</ixy>
+          <ixz>12.46535</ixz>
+          <iyz>-325.58824</iyz>
         </inertia>
       </inertial>
 
       <!-- ================= VISUAL ================= -->
       <visual name="body_visual">
         <geometry>
-          <box>
-            <size>1 1 0.5</size>
-          </box>
+          <mesh>
+            <uri>model://lander_model/meshes/body.stl</uri>
+            <scale>1 1 1</scale>
+          </mesh>
         </geometry>
         <material>
           <ambient>0.8 0.8 0.8 1</ambient>
@@ -40,18 +42,19 @@
       <collision name="body_collision">
         <geometry>
           <!-- collision leggermente maggiorata -->
-          <box>
-            <size>1.01 1.01 0.51</size>
-          </box>
+          <mesh>
+            <uri>model://lander_model/meshes/body.stl</uri>
+            <scale>1 1 1</scale>
+          </mesh>
         </geometry>
 
         <surface>
           <contact>
             <ode>
-              <kp>50000</kp>
-              <kd>500</kd>
+              <kp>100000000.0</kp>
+              <kd>100000.0</kd>
               <max_vel>0.1</max_vel>
-              <min_depth>0.001</min_depth>
+              <min_depth>0.01</min_depth>
             </ode>
           </contact>
 
@@ -71,6 +74,65 @@
         <max_contacts>20</max_contacts>
       </collision>
 
+      <!-- ================= lidar ================= -->
+      <sensor name="laser_altimeter" type="ray">
+        <pose>0 0 0 0 1.5708 0</pose>
+        <visualize>true</visualize>
+        <update_rate>50</update_rate>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>1</samples>
+              <resolution>1</resolution>
+              <min_angle>0</min_angle>
+              <max_angle>0</max_angle>
+            </horizontal>
+          </scan>
+          <range>
+            <min>0.05</min>
+            <max>100.0</max>
+            <resolution>0.01</resolution>
+          </range>
+        </ray>
+
+        <plugin name="gazebo_ros_laser" filename="libgazebo_ros_ray_sensor.so">
+          <ros>
+            <remapping>~/out:=/lander/laser_altimeter</remapping>
+          </ros>
+          <output_type>sensor_msgs/LaserScan</output_type>
+          <frame_name>body_link</frame_name>
+        </plugin>
+      </sensor>
     </link>
+
+    <!-- ================= THRUSTER ================= -->
+    <plugin name="thruster_central" filename="libgazebo_ros_thruster.so">
+      <link_name>body_link</link_name>
+      <ros_topic>/lander/thrusters/central</ros_topic>
+      <offset>0 0 -0.1174</offset>
+      <direction>0 0 1</direction>
+    </plugin>
+
+    <plugin name="thruster_left" filename="libgazebo_ros_thruster.so">
+      <link_name>body_link</link_name>
+      <ros_topic>/lander/thrusters/left</ros_topic>
+      <offset>-1.5 0.0 -0.1174</offset>
+      <direction>0 0 1</direction>
+    </plugin>
+
+    <plugin name="thruster_right" filename="libgazebo_ros_thruster.so">
+      <link_name>body_link</link_name>
+      <ros_topic>/lander/thrusters/right</ros_topic>
+      <offset>1.5 0.0 -0.1174</offset>
+      <direction>0 0 1</direction>
+    </plugin>
+
+    <!-- ================= MASS UPDATER ================= -->
+    <!--
+    <plugin name="mass_updater_plugin" filename="libgazebo_ros_mass_updater.so">
+      <link_name>body_link</link_name>
+    </plugin>
+    -->
+    
   </model>
 </sdf>

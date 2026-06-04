@@ -73,13 +73,12 @@
     <physics type='ode'>
       <max_step_size>0.001</max_step_size>
       <real_time_factor>1</real_time_factor>
-      <real_time_update_rate>1000</real_time_update_rate>
-      <gravity>0 0 -1.625</gravity>
+      <real_time_update_rate>1000</real_time_update_rate>      
     </physics>
     <gravity>0 0 -1.625</gravity>
 
     <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
-    <atmosphere type='adiabatic'/>
+    <atmosphere type='adiabatic' />
 
     <!-- ======================== -->
     <!-- 4️⃣ Scene (ambient, background, shadows) -->
@@ -96,7 +95,7 @@
     <audio>
       <device>default</device>
     </audio>
-    <wind/>
+    <wind />
 
     <!-- ======================== -->
     <!-- 6️⃣ Coordinate sferiche -->
@@ -114,7 +113,7 @@
     <!-- ======================== -->
     <gui fullscreen='0'>
       <camera name='user_camera'>
-        <pose>-62.9356 -34.7516 42.707 -0 0.255643 0.636199</pose>
+        <pose>68.1 49.43 28.56 0 0.159981 3.075784</pose>
         <view_controller>orbit</view_controller>
         <projection_type>perspective</projection_type>
       </camera>
@@ -125,8 +124,21 @@
     <!-- ======================== -->
     <include>
       <uri>model://lander_model</uri>
-      <pose>50 50 20 0 0 0</pose> <!-- z=2 per partire sopra il terreno -->
+      <pose>56.16764 53.47956 25.12897 0.17494 0.07923 -0.17195</pose> <!-- z=30 per partire sopra il
+      terreno -->
+      <plugin name="initial_velocity_plugin" filename="libInitialVelocityPlugin.so">
+        <linear_velocity>0.02208 0.83260 -0.33503</linear_velocity>
+        <angular_velocity>0.09118 0.05012 0.03359</angular_velocity>
+      </plugin>
     </include>
-
+    <!-- ====================================================== -->
+    <!-- Pubblica gli stati dei modelli su ROS    -->
+    <!-- ====================================================== -->
+    <plugin name="gazebo_ros_state" filename="libgazebo_ros_state.so">
+      <ros>
+        <namespace>/gazebo</namespace>
+      </ros>
+      <update_rate>50.0</update_rate>
+    </plugin>
   </world>
 </sdf>
