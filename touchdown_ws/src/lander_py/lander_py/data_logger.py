@@ -10,6 +10,7 @@ import time
 import signal
 import os
 import yaml
+import csv
 
 class FlightDataLogger(Node):
     def __init__(self, target_model="lander_model"):
@@ -228,6 +229,48 @@ def main(args=None):
             print(f"Linear Vel. [m/s]:   Vx={vx[0]:.4f} | Vy={vy[0]:.4f} | Vz={vz[0]:.4f}")
             print(f"Angular Vel. [rad/s]: Wx={wx[0]:.4f} | Wy={wy[0]:.4f} | Wz={wz[0]:.4f}")
             print("----------------------------------------\n")
+
+        # CSV saving
+        
+        if len(t_tel) > 0:
+            # Retrieve the id from Environment Variable
+            run_id = os.environ.get('MC_RUN_ID', 'Manual_Test')
+
+            # Parameters extraction
+            final_roll = abs(ro[-1])
+            final_pitch = abs(pi[-1])
+            max_vz_impact = min(vz)
+            
+            max_leg_force = 0.0
+            if len(t_forces) > 0:
+                max_leg_force = max([max(f_imp[leg]['z'], default=0.0) for leg in node.legs])
+            
+            settling_time = t_tel[-1] - node.touchdown_time if node.touchdown_time else 0.0
+
+            # Criteria definition 
+            is_flipped = (final_roll > 15.0) or (final_pitch > 15.0)
+            is_crashed = abs(max_vz_impact) > 3.0
+            is_broken = max_leg_force > 40000.0
+            
+            mission_success = not (is_flipped or is_crashed or is_broken)
+
+            # Append to CSV file
+            csv_path = os.path.join(node.plots_dir, "montecarlo_summary.csv")
+            file_exists = os.path.isfile(csv_path)
+
+            with open(csv_path, mode='a', newline='') as f:
+                writer = csv.writer(f)
+                if not file_exists:
+                    writer.writerow(['run_id', 'final_roll_deg', 'final_pitch_deg', 
+                                     'max_impact_vz_ms', 'max_force_z_N', 'settling_time_s', 
+                                     'is_flipped', 'is_crashed', 'mission_success'])
+                
+                writer.writerow([run_id, round(final_roll, 2), round(final_pitch, 2), 
+                                 round(max_vz_impact, 2), round(max_leg_force, 2), 
+                                 round(settling_time, 2), is_flipped, is_crashed, mission_success])
+            
+            print(f"Mission outcome for Run {run_id} saved to montecarlo_summary.csv")
+        
         
         # ROS Shutdown
         node.destroy_node()

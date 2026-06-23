@@ -15,6 +15,7 @@ def generate_launch_description():
     
     subprocess.run(['ros2', 'run', 'lander_py', 'generate_body'], check=True)
     subprocess.run(['ros2', 'run', 'lander_py', 'generate_scenario'], check=True)
+    subprocess.run(['ros2', 'run', 'lander_py', 'generate_legs'], check=True)
     
     print("\n[LAUNCH] >>> Generation complete! Starting Gazebo and nodes.... <<<\n")
 

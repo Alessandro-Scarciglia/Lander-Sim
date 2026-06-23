@@ -58,6 +58,7 @@ POS_TANK_4 = tank_cfg["pos_tank_4"] # MMH
 rho_MMH = tank_cfg["rho_MMH"]
 rho_MON = tank_cfg["rho_MON"]
 ratio_MON_MMH = tank_cfg["ratio_MON_MMH"]
+EPSILON_CONFIG = float(tank_cfg.get("epsilon_body", 1e-6))
 
 # Huygens-Steiner theorem
 def steiner_transport(I_cg, mass, old_pos, new_pos):
@@ -66,7 +67,7 @@ def steiner_transport(I_cg, mass, old_pos, new_pos):
     outer_d = np.outer(d, d)
     return np.array(I_cg) + mass * (d_sq * np.eye(3) - outer_d)
 
-def calculate_tank_properties(mass_target, current_rho , current_Lcyl, nz=4000):       
+def calculate_tank_properties(mass_target, current_rho , current_Lcyl, epsilon, nz=4000):       
     # Formula for the radius of a generating sphere: Rs = (a² + h²)/(2h)    
     Rsphere = (Rcyl**2 + Hdome**2) / (2.0 * Hdome)
 
@@ -130,7 +131,7 @@ def calculate_tank_properties(mass_target, current_rho , current_Lcyl, nz=4000):
             area[i] = np.pi * r**2
         return np.trapezoid(area, z)
     
-    epsilon = 1e-6
+    
     max_iter = 100
     iter_count = 0
     error = float('inf') # Initialize the error to an infinite value
@@ -238,13 +239,13 @@ def generate_simulation_files():
     m_tank_MMH = mass_tot_MMH / 2.0
 
     # Calculation of properties for tank 1 and tank 4 (MMH)
-    z_cg_MMH, ixx_MMH, iyy_MMH, izz_MMH = calculate_tank_properties(m_tank_MMH, rho_MMH, Lcyl_MMH)
+    z_cg_MMH, ixx_MMH, iyy_MMH, izz_MMH = calculate_tank_properties(m_tank_MMH, rho_MMH, Lcyl_MMH, EPSILON_CONFIG)
     I_tank_MMH = [[ixx_MMH, 0, 0], [0, iyy_MMH, 0], [0, 0, izz_MMH]]
     cog_tank1 = np.array(POS_TANK_1) + np.array([0.0, 0.0, z_cg_MMH])
     cog_tank4 = np.array(POS_TANK_4) + np.array([0.0, 0.0, z_cg_MMH])
 
     # Calculation of properties for tank 2 and tank 3 (MON)
-    z_cg_MON, ixx_MON, iyy_MON, izz_MON = calculate_tank_properties(m_tank_MON, rho_MON, Lcyl_MON)
+    z_cg_MON, ixx_MON, iyy_MON, izz_MON = calculate_tank_properties(m_tank_MON, rho_MON, Lcyl_MON, EPSILON_CONFIG)
     I_tank_MON = [[ixx_MON, 0, 0], [0, iyy_MON, 0], [0, 0, izz_MON]]    
     cog_tank2 = np.array(POS_TANK_2) + np.array([0.0, 0.0, z_cg_MON])
     cog_tank3 = np.array(POS_TANK_3) + np.array([0.0, 0.0, z_cg_MON])

@@ -1,0 +1,15 @@
+run_id,final_roll_deg,final_pitch_deg,max_impact_vz_ms,max_force_z_N,settling_time_s,is_flipped,is_crashed,mission_success
+1,10.57,1.64,-2.78,779957.12,-1782129883.74,False,False,False
+2,11.85,3.35,-1.79,754150.63,-1782129909.88,False,False,False
+3,13.56,5.22,-2.02,599087.83,-1782129929.78,False,False,False
+4,16.78,8.43,-2.11,775462.16,-1782129951.13,True,False,False
+5,1.31,5.8,-1.65,670454.09,-1782129973.82,False,False,False
+Manual_Test,9.39,5.53,-1.64,550505.79,-1782201629.13,False,False,False
+Manual_Test,11.17,8.91,-2.46,657280.09,-1782201985.0,False,False,False
+Manual_Test,1.07,15.3,-1.25,590664.0,-1782202009.07,True,False,False
+Manual_Test,13.23,3.89,-2.03,645038.02,-1782202045.1,False,False,False
+Manual_Test,10.77,6.54,-1.67,765292.61,-1782202413.59,False,False,False
+Manual_Test,14.48,2.89,-2.34,956267.05,-1782202437.2,False,False,False
+Manual_Test,6.81,16.02,-2.22,826450.15,-1782202461.26,True,False,False
+Manual_Test,9.51,5.93,-2.64,549044.79,-1782202628.79,False,False,False
+Manual_Test,7.55,0.63,-1.96,757590.58,-1782202653.96,False,False,False

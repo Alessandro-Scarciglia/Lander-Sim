@@ -1,0 +1,177 @@
+<?xml version="1.0"?>
+<sdf version="1.7">
+  <model name="lander_model">
+    <static>false</static>
+    <self_collide>false</self_collide>
+
+    <!-- ================= BODY ================= -->
+    <include>
+      <uri>model://lander_model/body</uri>
+      <name>body_instance</name>
+    </include>
+
+    <!-- ================= PASSENGER ================= -->
+    <include>
+      <uri>model://lander_model/passenger</uri>
+      <name>passenger</name>
+      <pose>0 0 2.464 0 0 0</pose>
+    </include>
+
+    <!-- ================= LEGS ================= -->
+    <include>
+      <uri>model://lander_model/leg1</uri>
+      <name>leg1</name>
+      <pose relative_to="body_instance::body_link">{POSE_LEG_1}</pose>
+    </include>
+
+    <include>
+      <uri>model://lander_model/leg2</uri>
+      <name>leg2</name>
+      <pose relative_to="body_instance::body_link">{POSE_LEG_2}</pose>
+    </include>
+
+    <include>
+      <uri>model://lander_model/leg3</uri>
+      <name>leg3</name>
+      <pose relative_to="body_instance::body_link">{POSE_LEG_3}</pose>
+    </include>
+
+    <include>
+      <uri>model://lander_model/leg4</uri>
+      <name>leg4</name>
+      <pose relative_to="body_instance::body_link">{POSE_LEG_4}</pose>
+    </include>
+
+    <!-- ================= JOINT TEMPLATE ================= -->
+    <!-- Rigidità aumentata per evitare attraversamenti -->
+    <joint name="payload_interface_joint" type="fixed">
+      <parent>body_instance::body_link</parent>
+      <child>passenger::passenger_link</child>
+    </joint>
+
+    <!-- Joint leg 1 -->
+    <joint name="leg1_joint_C1" type="fixed">
+      <parent>body_instance::body_link</parent>
+      <child>leg1::link_C1D</child>
+    </joint>
+
+    <joint name="leg1_joint_C2" type="fixed">
+      <parent>body_instance::body_link</parent>
+      <child>leg1::link_C2D</child>
+    </joint>
+
+    <joint name="leg1_joint_A1" type="fixed">
+      <parent>body_instance::body_link</parent>
+      <child>leg1::link_A1D</child>
+    </joint>
+
+    <joint name="leg1_joint_A2" type="fixed">
+      <parent>body_instance::body_link</parent>
+      <child>leg1::link_A2D</child>
+    </joint>
+
+    <joint name="leg1_joint_B1" type="ball">
+      <parent>body_instance::body_link</parent>
+      <child>leg1::link_B1E_strut</child>      
+    </joint>
+
+    <joint name="leg1_joint_B2" type="ball">
+      <parent>body_instance::body_link</parent>
+      <child>leg1::link_B2E_strut</child>      
+    </joint>
+
+    <!-- Joint leg 2 -->
+    <joint name="leg2_joint_C1" type="fixed">
+      <parent>body_instance::body_link</parent>
+      <child>leg2::link_C1D</child>
+    </joint>
+
+    <joint name="leg2_joint_C2" type="fixed">
+      <parent>body_instance::body_link</parent>
+      <child>leg2::link_C2D</child>
+    </joint>
+
+    <joint name="leg2_joint_A1" type="fixed">
+      <parent>body_instance::body_link</parent>
+      <child>leg2::link_A1D</child>
+    </joint>
+
+    <joint name="leg2_joint_A2" type="fixed">
+      <parent>body_instance::body_link</parent>
+      <child>leg2::link_A2D</child>
+    </joint>
+
+    <joint name="leg2_joint_B1" type="ball">
+      <parent>body_instance::body_link</parent>
+      <child>leg2::link_B1E_strut</child>      
+    </joint>
+
+    <joint name="leg2_joint_B2" type="ball">
+      <parent>body_instance::body_link</parent>
+      <child>leg2::link_B2E_strut</child>      
+    </joint>
+
+
+    <!-- Joint leg 3 -->
+    <joint name="leg3_joint_C1" type="fixed">
+      <parent>body_instance::body_link</parent>
+      <child>leg3::link_C1D</child>
+    </joint>
+
+    <joint name="leg3_joint_C2" type="fixed">
+      <parent>body_instance::body_link</parent>
+      <child>leg3::link_C2D</child>
+    </joint>
+
+    <joint name="leg3_joint_A1" type="fixed">
+      <parent>body_instance::body_link</parent>
+      <child>leg3::link_A1D</child>
+    </joint>
+
+    <joint name="leg3_joint_A2" type="fixed">
+      <parent>body_instance::body_link</parent>
+      <child>leg3::link_A2D</child>
+    </joint>
+
+    <joint name="leg3_joint_B1" type="ball">
+      <parent>body_instance::body_link</parent>
+      <child>leg3::link_B1E_strut</child>      
+    </joint>
+
+    <joint name="leg3_joint_B2" type="ball">
+      <parent>body_instance::body_link</parent>
+      <child>leg3::link_B2E_strut</child>      
+    </joint>
+
+    <!-- Joint leg 4 -->
+    <joint name="leg4_joint_C1" type="fixed">
+      <parent>body_instance::body_link</parent>
+      <child>leg4::link_C1D</child>
+    </joint>
+
+    <joint name="leg4_joint_C2" type="fixed">
+      <parent>body_instance::body_link</parent>
+      <child>leg4::link_C2D</child>
+    </joint>
+
+    <joint name="leg4_joint_A1" type="fixed">
+      <parent>body_instance::body_link</parent>
+      <child>leg4::link_A1D</child>
+    </joint>
+
+    <joint name="leg4_joint_A2" type="fixed">
+      <parent>body_instance::body_link</parent>
+      <child>leg4::link_A2D</child>
+    </joint>
+
+    <joint name="leg4_joint_B1" type="ball">
+      <parent>body_instance::body_link</parent>
+      <child>leg4::link_B1E_strut</child>      
+    </joint>
+
+    <joint name="leg4_joint_B2" type="ball">
+      <parent>body_instance::body_link</parent>
+      <child>leg4::link_B2E_strut</child>      
+    </joint>
+  </model>
+</sdf>

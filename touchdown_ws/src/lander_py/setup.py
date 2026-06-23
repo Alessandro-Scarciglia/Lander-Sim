@@ -25,6 +25,7 @@ setup(
             'thruster_logger_node = lander_py.thruster_logger:main',
             'generate_body = lander_py.generate_body:generate_simulation_files',
             'generate_scenario = lander_py.generate_scenario:generate_kinematics',
+            'generate_legs = lander_py.generate_legs:main',
         ],
     },
 )

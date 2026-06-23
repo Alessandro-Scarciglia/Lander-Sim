@@ -1,0 +1,173 @@
+<?xml version="1.0"?>
+<sdf version="1.7">
+  <model name="{MODEL_NAME}">
+    <static>false</static>
+    <self_collide>false</self_collide>
+
+    <link name="link_C1D">
+      <pose>{POSE_C1D}</pose>
+      <inertial><mass>{TRUSS_MASS}</mass><inertia><ixx>{IXX_C1D}</ixx><iyy>{IYY_C1D}</iyy><izz>{IZZ_C1D}</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>
+      <collision name="col_C1D"><geometry><cylinder><radius>{TRUSS_RAD}</radius><length>{L_C1D}</length></cylinder></geometry></collision>
+      <visual name="vis_C1D"><geometry><cylinder><radius>{TRUSS_RAD}</radius><length>{L_C1D}</length></cylinder></geometry><material><ambient>0.7 0.7 0.7 1</ambient><diffuse>0.7 0.7 0.7 1</diffuse></material></visual>
+    </link>
+
+    <link name="link_C2D">
+      <pose>{POSE_C2D}</pose>
+      <inertial><mass>{TRUSS_MASS}</mass><inertia><ixx>{IXX_C2D}</ixx><iyy>{IYY_C2D}</iyy><izz>{IZZ_C2D}</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>
+      <collision name="col_C2D"><geometry><cylinder><radius>{TRUSS_RAD}</radius><length>{L_C2D}</length></cylinder></geometry></collision>
+      <visual name="vis_C2D"><geometry><cylinder><radius>{TRUSS_RAD}</radius><length>{L_C2D}</length></cylinder></geometry><material><ambient>0.7 0.7 0.7 1</ambient><diffuse>0.7 0.7 0.7 1</diffuse></material></visual>
+    </link>
+
+    <link name="link_A1D">
+      <pose>{POSE_A1D}</pose>
+      <inertial><mass>{TRUSS_MASS}</mass><inertia><ixx>{IXX_A1D}</ixx><iyy>{IYY_A1D}</iyy><izz>{IZZ_A1D}</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>
+      <collision name="col_A1D"><geometry><cylinder><radius>{TRUSS_RAD}</radius><length>{L_A1D}</length></cylinder></geometry></collision>
+      <visual name="vis_A1D"><geometry><cylinder><radius>{TRUSS_RAD}</radius><length>{L_A1D}</length></cylinder></geometry><material><ambient>0.7 0.7 0.7 1</ambient><diffuse>0.7 0.7 0.7 1</diffuse></material></visual>
+    </link>
+
+    <link name="link_A2D">
+      <pose>{POSE_A2D}</pose>
+      <inertial><mass>{TRUSS_MASS}</mass><inertia><ixx>{IXX_A2D}</ixx><iyy>{IYY_A2D}</iyy><izz>{IZZ_A2D}</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>
+      <collision name="col_A2D"><geometry><cylinder><radius>{TRUSS_RAD}</radius><length>{L_A2D}</length></cylinder></geometry></collision>
+      <visual name="vis_A2D"><geometry><cylinder><radius>{TRUSS_RAD}</radius><length>{L_A2D}</length></cylinder></geometry><material><ambient>0.7 0.7 0.7 1</ambient><diffuse>0.7 0.7 0.7 1</diffuse></material></visual>
+    </link>
+
+    <link name="link_B1E_strut">
+      <pose>{POSE_B1_STRUT}</pose>
+      <inertial><mass>{MASS_B_STRUT}</mass><inertia><ixx>{IXX_B1_STRUT}</ixx><iyy>{IYY_B1_STRUT}</iyy><izz>{IZZ_B1_STRUT}</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>
+      <visual name="strut_visual"><pose>0 0 {VIS_Z_B1_STRUT} 0 0 0</pose><geometry><cylinder><radius>{RAD_B_STRUT}</radius><length>{L_B1_STRUT}</length></cylinder></geometry><material><ambient>0.4 0.4 0.4 1</ambient><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+    </link>
+
+    <link name="link_B1E_piston">
+      <pose relative_to="link_B1E_strut">0 0 {REL_Z_B1_PISTON} 0 0 0</pose>
+      <inertial><mass>{MASS_B_PISTON}</mass><inertia><ixx>{IXX_B1_PISTON}</ixx><iyy>{IYY_B1_PISTON}</iyy><izz>{IZZ_B1_PISTON}</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>
+      <visual name="piston_visual"><pose>0 0 {VIS_Z_B1_PISTON} 0 0 0</pose><geometry><cylinder><radius>{RAD_B_PISTON}</radius><length>{L_B1_PISTON}</length></cylinder></geometry><material><ambient>0.7 0.7 0.7 1</ambient><diffuse>0.7 0.7 0.7 1</diffuse></material></visual>
+    </link>
+
+    <link name="link_B2E_strut">
+      <pose>{POSE_B2_STRUT}</pose>
+      <inertial><mass>{MASS_B_STRUT}</mass><inertia><ixx>{IXX_B2_STRUT}</ixx><iyy>{IYY_B2_STRUT}</iyy><izz>{IZZ_B2_STRUT}</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>
+      <visual name="strut_visual"><pose>0 0 {VIS_Z_B2_STRUT} 0 0 0</pose><geometry><cylinder><radius>{RAD_B_STRUT}</radius><length>{L_B2_STRUT}</length></cylinder></geometry><material><ambient>0.4 0.4 0.4 1</ambient><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+    </link>
+
+    <link name="link_B2E_piston">
+      <pose relative_to="link_B2E_strut">0 0 {REL_Z_B2_PISTON} 0 0 0</pose>
+      <inertial><mass>{MASS_B_PISTON}</mass><inertia><ixx>{IXX_B2_PISTON}</ixx><iyy>{IYY_B2_PISTON}</iyy><izz>{IZZ_B2_PISTON}</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>
+      <visual name="piston_visual"><pose>0 0 {VIS_Z_B2_PISTON} 0 0 0</pose><geometry><cylinder><radius>{RAD_B_PISTON}</radius><length>{L_B2_PISTON}</length></cylinder></geometry><material><ambient>0.7 0.7 0.7 1</ambient><diffuse>0.7 0.7 0.7 1</diffuse></material></visual>
+    </link>
+
+    <link name="link_D">
+      <pose>{POSE_D}</pose>
+      <inertial><mass>10.0</mass><inertia><ixx>0.01</ixx><iyy>0.01</iyy><izz>0.01</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>
+      <visual name="vis"><geometry><sphere><radius>0.1</radius></sphere></geometry></visual>
+    </link>
+
+    <link name="link_E">
+      <pose>{POSE_E}</pose>
+      <inertial><mass>10.0</mass><inertia><ixx>0.01</ixx><iyy>0.01</iyy><izz>0.01</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>
+      <visual name="vis_E"><geometry><sphere><radius>0.1</radius></sphere></geometry></visual>
+    </link>
+
+    <link name="link_DF_strut">
+      <pose>{POSE_DF_STRUT}</pose>
+      <inertial><mass>{MASS_DF_STRUT}</mass><inertia><ixx>{IXX_DF_STRUT}</ixx><iyy>{IYY_DF_STRUT}</iyy><izz>{IZZ_DF_STRUT}</izz><ixy>0.0</ixy><ixz>0.0</ixz><iyz>0.0</iyz></inertia></inertial>
+      <collision name="strut_collision"><pose>0 0 {VIS_Z_DF_STRUT} 0 0 0</pose><geometry><cylinder><radius>{RAD_DF_STRUT}</radius><length>{L_DF_STRUT}</length></cylinder></geometry></collision>
+      <visual name="strut_visual"><pose>0 0 {VIS_Z_DF_STRUT} 0 0 0</pose><geometry><cylinder><radius>{RAD_DF_STRUT}</radius><length>{L_DF_STRUT}</length></cylinder></geometry><material><ambient>0.4 0.4 0.4 1</ambient><diffuse>0.4 0.4 0.4 1</diffuse></material></visual>
+    </link>
+
+    <link name="link_DF_piston">
+      <pose relative_to="link_DF_strut">0 0 {Z_PISTON_START} 0 0 0</pose>
+      <inertial><mass>{MASS_DF_PISTON}</mass><inertia><ixx>{IXX_DF_PISTON}</ixx><iyy>{IYY_DF_PISTON}</iyy><izz>{IZZ_DF_PISTON}</izz><ixy>0.0</ixy><ixz>0.0</ixz><iyz>0.0</iyz></inertia></inertial>
+      <collision name="piston_collision"><pose>0 0 {VIS_Z_DF_PISTON} 0 0 0</pose><geometry><cylinder><radius>{RAD_DF_PISTON}</radius><length>{L_DF_PISTON}</length></cylinder></geometry></collision>
+      <visual name="piston_visual"><pose>0 0 {VIS_Z_DF_PISTON} 0 0 0</pose><geometry><cylinder><radius>{RAD_DF_PISTON}</radius><length>{L_DF_PISTON}</length></cylinder></geometry><material><ambient>0.7 0.7 0.7 1</ambient><diffuse>0.7 0.7 0.7 1</diffuse></material></visual>
+    </link>
+
+    <link name="link_foot">
+      <pose relative_to="link_DF_piston">0 0 {Z_FOOT_POS} 0 {PITCH_FOOT} 0</pose>
+      <inertial><mass>5.0</mass><inertia><ixx>0.05</ixx><iyy>0.05</iyy><izz>0.05</izz><ixy>0.0</ixy><ixz>0.0</ixz><iyz>0.0</iyz></inertia></inertial>
+      <collision name="foot_collision">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry><cylinder><radius>0.25</radius><length>0.05</length></cylinder></geometry>
+        <surface>
+          <contact><ode><kp>10000000.0</kp><kd>100000.0</kd><max_vel>1.0</max_vel><min_depth>0.005</min_depth></ode></contact>
+          <friction><ode><mu>1.0</mu><mu2>1.0</mu2></ode></friction>
+        </surface>
+        <max_contacts>10</max_contacts>
+      </collision>
+      <visual name="footpad_visual"><pose>0 0 0 0 0 0</pose><geometry><cylinder><radius>0.25</radius><length>0.05</length></cylinder></geometry><material><ambient>0.2 0.2 0.2 1</ambient><diffuse>0.2 0.2 0.2 1</diffuse></material></visual>
+      <sensor name="foot_contact_sensor" type="contact">
+        <always_on>true</always_on>
+        <update_rate>50.0</update_rate>
+        <contact><collision>foot_collision</collision></contact>
+        <plugin name="foot_bumper_{MODEL_NAME}" filename="libgazebo_ros_bumper.so">
+          <ros><remapping>bumper_states:=/lander/contact_forces</remapping></ros>
+          <frame_name>world</frame_name>
+        </plugin>
+      </sensor>
+    </link>
+
+    <joint name="joint_D_C1" type="fixed"><parent>link_D</parent><child>link_C1D</child></joint>
+    <joint name="joint_D_C2" type="fixed"><parent>link_D</parent><child>link_C2D</child></joint>
+    <joint name="joint_D_A1" type="fixed"><parent>link_D</parent><child>link_A1D</child></joint>
+    <joint name="joint_D_A2" type="fixed"><parent>link_D</parent><child>link_A2D</child></joint>
+    
+    <joint name="joint_D_DF" type="revolute">
+      <parent>link_D</parent><child>link_DF_strut</child>
+      <pose relative_to="link_D">0 0 0 0 0 0</pose><axis><xyz>0 1 0</xyz></axis>
+    </joint>
+    <joint name="joint_E_to_DF" type="fixed"><parent>link_DF_strut</parent><child>link_E</child></joint>
+
+    <joint name="shock_absorber_DF" type="prismatic">
+      <parent>link_DF_strut</parent><child>link_DF_piston</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit><lower>0.0</lower><upper>{DF_LIMIT}</upper><effort>150000.0</effort><velocity>10.0</velocity></limit>
+        <dynamics><spring_reference>0.0</spring_reference><spring_stiffness>{DF_K}</spring_stiffness><damping>{DF_C}</damping></dynamics>
+      </axis>
+    </joint>
+
+    <joint name="joint_F_foot" type="universal">
+      <parent>link_DF_piston</parent><child>link_foot</child>
+      <pose>0 0 0.025 0 0 0</pose>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit><lower>-0.52</lower><upper>0.52</upper></limit>
+        <dynamics><spring_reference>0.0</spring_reference><spring_stiffness>{FOOT_K}</spring_stiffness><damping>{FOOT_C}</damping></dynamics>
+      </axis>
+      <axis2>
+        <xyz>1 0 0</xyz>
+        <limit><lower>-0.52</lower><upper>0.52</upper></limit>
+        <dynamics><spring_reference>0.0</spring_reference><spring_stiffness>{FOOT_K}</spring_stiffness><damping>{FOOT_C}</damping></dynamics>
+      </axis2>
+    </joint>
+
+    <joint name="joint_B1_prismatic" type="prismatic">
+      <parent>link_B1E_strut</parent><child>link_B1E_piston</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit><lower>-{B_LIMIT}</lower><upper>{B_LIMIT}</upper><effort>10000.0</effort><velocity>1.0</velocity></limit>
+        <dynamics><spring_reference>0.0</spring_reference><spring_stiffness>{B_K}</spring_stiffness><damping>{B_C}</damping></dynamics>
+      </axis>
+    </joint>
+
+    <joint name="joint_B1_to_E" type="ball">
+      <parent>link_E</parent><child>link_B1E_piston</child>
+      <pose relative_to="link_E">0 0 0 0 0 0</pose>
+    </joint>
+
+    <joint name="joint_B2_prismatic" type="prismatic">
+      <parent>link_B2E_strut</parent><child>link_B2E_piston</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit><lower>-{B_LIMIT}</lower><upper>{B_LIMIT}</upper><effort>10000.0</effort><velocity>1.0</velocity></limit>
+        <dynamics><spring_reference>0.0</spring_reference><spring_stiffness>{B_K}</spring_stiffness><damping>{B_C}</damping></dynamics>
+      </axis>
+    </joint>
+
+    <joint name="joint_B2_to_E" type="ball">
+      <parent>link_E</parent><child>link_B2E_piston</child>
+      <pose relative_to="link_E">0 0 0 0 0 0</pose>
+    </joint>
+
+  </model>
+</sdf>
