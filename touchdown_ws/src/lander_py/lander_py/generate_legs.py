@@ -70,9 +70,11 @@ def generate_legs(template_path, output_dir, config_parameters=None):
         "piston_DF_mass": 20.0, "piston_DF_radius": 0.05, "piston_DF_L": 0.7,
         "b_strut_mass": 15.0, "b_strut_radius": 0.05,
         "b_piston_mass": 10.0, "b_piston_radius": 0.035,
-        "df_k": 100000.0, "df_c": 18000.0, "df_limit": 0.45,
-        "b_k": 100000.0,  "b_c": 1000.0, "b_limit": 0.4,
-        "foot_k": 100.0,  "foot_c": 10.0
+        "df_k": 100000.0, "df_c": 18000.0, "df_fric": 5000.0, "df_limit": 0.45,
+        "b_k": 100000.0,  "b_c": 1000.0, "b_fric": 3000.0, "b_limit": 0.4,
+        "foot_k": 100.0,  "foot_c": 10.0, "df_crush_force_stage1": 12000.0, "df_rebound_damping": 20000.0,
+        "df_crush_force_stage2": 30000.0, "df_stroke_limit_stage_1": 0.254, "df_stroke_limit_stage_2": 0.8128,
+        "be_crush_force": 5000.0, "be_rebound_damping": 20000.0, "df_bottomout_stiffness": 10000000,
     }
     if config_parameters:
         cfg.update(config_parameters)
@@ -164,11 +166,21 @@ def generate_legs(template_path, output_dir, config_parameters=None):
 
         leg_model = leg_model.replace("{DF_K}", f"{cfg['df_k']:.1f}")
         leg_model = leg_model.replace("{DF_C}", f"{cfg['df_c']:.1f}")
+        leg_model = leg_model.replace("{DF_fric}", f"{cfg['df_fric']:.1f}")
         leg_model = leg_model.replace("{DF_LIMIT}", f"{cfg['df_limit']:.2f}")
+        leg_model = leg_model.replace("{DF_CF_1}", f"{cfg['df_crush_force_stage1']:.1f}")
+        leg_model = leg_model.replace("{DF_CF_2}", f"{cfg['df_crush_force_stage2']:.1f}")
+        leg_model = leg_model.replace("{DF_SL_1}", f"{cfg['df_stroke_limit_stage_1']:.3f}")
+        leg_model = leg_model.replace("{DF_SL_2}", f"{cfg['df_stroke_limit_stage_2']:.3f}")
+        leg_model = leg_model.replace("{DF_BS}", f"{cfg['df_bottomout_stiffness']:.1f}")
+        leg_model = leg_model.replace("{DF_RD}", f"{cfg['df_rebound_damping']:.1f}")
         
         leg_model = leg_model.replace("{B_K}", f"{cfg['b_k']:.1f}")
         leg_model = leg_model.replace("{B_C}", f"{cfg['b_c']:.1f}")
+        leg_model = leg_model.replace("{B_fric}", f"{cfg['b_fric']:.1f}")
         leg_model = leg_model.replace("{B_LIMIT}", f"{cfg['b_limit']:.2f}")
+        leg_model = leg_model.replace("{BE_CF}", f"{cfg['be_crush_force']:.1f}")
+        leg_model = leg_model.replace("{BE_RD}", f"{cfg['be_rebound_damping']:.1f}")
         
         leg_model = leg_model.replace("{FOOT_K}", f"{cfg['foot_k']:.1f}")
         leg_model = leg_model.replace("{FOOT_C}", f"{cfg['foot_c']:.1f}")

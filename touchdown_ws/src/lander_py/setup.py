@@ -23,9 +23,11 @@ setup(
             'thrusters_node = lander_py.thrusters:main',
             'data_logger_node = lander_py.data_logger:main',
             'thruster_logger_node = lander_py.thruster_logger:main',
+            'df_logger_node = lander_py.shock_absorber_logger:main',
             'generate_body = lander_py.generate_body:generate_simulation_files',
             'generate_scenario = lander_py.generate_scenario:generate_kinematics',
             'generate_legs = lander_py.generate_legs:main',
+            'psi_disturbance_node = lander_py.psi_disturbance:main',
         ],
     },
 )

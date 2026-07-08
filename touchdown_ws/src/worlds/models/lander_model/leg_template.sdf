@@ -89,10 +89,10 @@
         <pose>0 0 0 0 0 0</pose>
         <geometry><cylinder><radius>0.25</radius><length>0.05</length></cylinder></geometry>
         <surface>
-          <contact><ode><kp>10000000.0</kp><kd>100000.0</kd><max_vel>1.0</max_vel><min_depth>0.005</min_depth></ode></contact>
+          <contact><ode><kp>5000000.0</kp><kd>50000</kd><max_vel>0.0</max_vel><min_depth>0.0</min_depth></ode></contact>
           <friction><ode><mu>1.0</mu><mu2>1.0</mu2></ode></friction>
         </surface>
-        <max_contacts>10</max_contacts>
+        <max_contacts>20</max_contacts>
       </collision>
       <visual name="footpad_visual"><pose>0 0 0 0 0 0</pose><geometry><cylinder><radius>0.25</radius><length>0.05</length></cylinder></geometry><material><ambient>0.2 0.2 0.2 1</ambient><diffuse>0.2 0.2 0.2 1</diffuse></material></visual>
       <sensor name="foot_contact_sensor" type="contact">
@@ -121,8 +121,8 @@
       <parent>link_DF_strut</parent><child>link_DF_piston</child>
       <axis>
         <xyz>0 0 1</xyz>
-        <limit><lower>0.0</lower><upper>{DF_LIMIT}</upper><effort>150000.0</effort><velocity>10.0</velocity></limit>
-        <dynamics><spring_reference>0.0</spring_reference><spring_stiffness>{DF_K}</spring_stiffness><damping>{DF_C}</damping></dynamics>
+        <limit><lower>0.0</lower><upper>{DF_LIMIT}</upper><effort>100000.0</effort><velocity>3.0</velocity></limit>
+        <dynamics><spring_reference>0.0</spring_reference><spring_stiffness>0.0</spring_stiffness><damping>0.0</damping><friction>{DF_fric}</friction></dynamics>
       </axis>
     </joint>
 
@@ -145,8 +145,8 @@
       <parent>link_B1E_strut</parent><child>link_B1E_piston</child>
       <axis>
         <xyz>0 0 1</xyz>
-        <limit><lower>-{B_LIMIT}</lower><upper>{B_LIMIT}</upper><effort>10000.0</effort><velocity>1.0</velocity></limit>
-        <dynamics><spring_reference>0.0</spring_reference><spring_stiffness>{B_K}</spring_stiffness><damping>{B_C}</damping></dynamics>
+        <limit><lower>-{B_LIMIT}</lower><upper>{B_LIMIT}</upper><effort>100000.0</effort><velocity>1.0</velocity></limit>
+        <dynamics><spring_reference>0.0</spring_reference><spring_stiffness>0.0</spring_stiffness><damping>0.0</damping><friction>{B_fric}</friction></dynamics>
       </axis>
     </joint>
 
@@ -159,8 +159,8 @@
       <parent>link_B2E_strut</parent><child>link_B2E_piston</child>
       <axis>
         <xyz>0 0 1</xyz>
-        <limit><lower>-{B_LIMIT}</lower><upper>{B_LIMIT}</upper><effort>10000.0</effort><velocity>1.0</velocity></limit>
-        <dynamics><spring_reference>0.0</spring_reference><spring_stiffness>{B_K}</spring_stiffness><damping>{B_C}</damping></dynamics>
+        <limit><lower>-{B_LIMIT}</lower><upper>{B_LIMIT}</upper><effort>100000.0</effort><velocity>1.0</velocity></limit>
+        <dynamics><spring_reference>0.0</spring_reference><spring_stiffness>0.0</spring_stiffness><damping>0.0</damping><friction>{B_fric}</friction></dynamics>
       </axis>
     </joint>
 
@@ -168,6 +168,48 @@
       <parent>link_E</parent><child>link_B2E_piston</child>
       <pose relative_to="link_E">0 0 0 0 0 0</pose>
     </joint>
+
+    <plugin name="crushable_df_{MODEL_NAME}" filename="libCrushableJointPlugin.so">
+      <ros><namespace>/lander</namespace></ros>
+      <topic_name>{MODEL_NAME}/df_force_displacement</topic_name>
+      <joint_name>shock_absorber_DF</joint_name>
+      <dual_stage>true</dual_stage>
+      <stiffness>{DF_K}</stiffness>
+      <damping>{DF_C}</damping>
+      <crush_force_stage_1>{DF_CF_1}</crush_force_stage_1>
+      <stroke_limit_stage_1>{DF_SL_1}</stroke_limit_stage_1>
+      <crush_force_stage_2>{DF_CF_2}</crush_force_stage_2>
+      <total_stroke_limit>{DF_SL_2}</total_stroke_limit>
+      <rebound_damping>{DF_RD}</rebound_damping>
+      <bottomout_stiffness>{DF_BS}</bottomout_stiffness>
+      <compression_dir>1.0</compression_dir>
+    </plugin>
+
+    <plugin name="crushable_b1_{MODEL_NAME}" filename="libCrushableJointPlugin.so">
+      <ros><namespace>/lander</namespace></ros>
+      <topic_name>{MODEL_NAME}/b1_force_displacement</topic_name>
+      <joint_name>joint_B1_prismatic</joint_name>
+      <crush_force>{BE_CF}</crush_force>
+      <stiffness>{B_K}</stiffness>
+      <damping>{B_C}</damping>
+      <rebound_damping>{BE_RD}</rebound_damping>
+      <compression_dir>1.0</compression_dir>
+      <bidirectional>true</bidirectional>
+      <dual_stage>false</dual_stage>
+    </plugin>
+
+    <plugin name="crushable_b2_{MODEL_NAME}" filename="libCrushableJointPlugin.so">
+      <ros><namespace>/lander</namespace></ros>
+      <topic_name>{MODEL_NAME}/b2_force_displacement</topic_name>
+      <joint_name>joint_B2_prismatic</joint_name>
+      <crush_force>{BE_CF}</crush_force>
+      <rebound_damping>{BE_RD}</rebound_damping>
+      <stiffness>{B_K}</stiffness>
+      <damping>{B_C}</damping>
+      <compression_dir>1.0</compression_dir>
+      <bidirectional>true</bidirectional>
+      <dual_stage>false</dual_stage>
+    </plugin>
 
   </model>
 </sdf>

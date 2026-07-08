@@ -13,24 +13,29 @@ find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 
-# Create the first library (Mass Updater)
-add_library(gazebo_ros_mass_updater SHARED src/gazebo_ros_mass_updater.cpp)
-ament_target_dependencies(gazebo_ros_mass_updater rclcpp gazebo_ros gazebo_dev std_msgs geometry_msgs)
-
-# Create the second library (Thrusters)
+# Thrusters
 add_library(gazebo_ros_thruster SHARED src/gazebo_ros_thruster.cpp)
 ament_target_dependencies(gazebo_ros_thruster gazebo_ros rclcpp std_msgs gazebo_dev)
 
 
-# Create the third library (Initial Velocity)
+# Initial Velocity
 add_library(InitialVelocityPlugin SHARED src/InitialVelocityPlugin.cc)
 ament_target_dependencies(InitialVelocityPlugin gazebo_dev gazebo_ros rclcpp)
 
+# Dynamic Terrain
+add_library(DynamicTerrainPlugin SHARED src/Dynamic_terrain_plugin.cc)
+ament_target_dependencies(DynamicTerrainPlugin gazebo_dev gazebo_ros rclcpp)
 
-install(TARGETS
-  gazebo_ros_mass_updater
+# Crushable Shock Absorbers
+add_library(CrushableJointPlugin SHARED src/crushable_shockabs.cpp)
+ament_target_dependencies(CrushableJointPlugin gazebo_dev gazebo_ros rclcpp geometry_msgs)
+
+
+install(TARGETS  
   gazebo_ros_thruster  
   InitialVelocityPlugin
+  DynamicTerrainPlugin
+  CrushableJointPlugin
   DESTINATION lib/${PROJECT_NAME}
 )
 

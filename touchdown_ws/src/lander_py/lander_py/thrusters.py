@@ -85,7 +85,7 @@ class Thrusters(Node):
         self.pub_left = self.create_publisher(Float64, '/lander/thrusters/left', 10)
         self.pub_right = self.create_publisher(Float64, '/lander/thrusters/right', 10)
         self.pub_central = self.create_publisher(Float64, '/lander/thrusters/central', 10)  
-        self.pub_tstart = self.create_publisher(Float64, '/lander/t_start', 10)      
+        self.pub_tstart = self.create_publisher(Float64, '/lander/t_start', 10)        
 
         # Timer
         self.start_time = None

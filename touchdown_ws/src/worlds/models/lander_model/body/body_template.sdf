@@ -38,6 +38,36 @@
         </material>
       </visual>
 
+      <visual name="thruster_central_visual">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://lander_model/meshes/thruster.stl</uri>
+            <scale>1 1 1</scale>
+          </mesh>
+        </geometry>
+      </visual>
+
+      <visual name="thruster_left_visual">
+        <pose>-1.5 0.0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://lander_model/meshes/thruster.stl</uri>
+            <scale>1 1 1</scale>
+          </mesh>
+        </geometry>
+      </visual>
+
+      <visual name="thruster_right_visual">
+        <pose>1.5 0.0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://lander_model/meshes/thruster.stl</uri>
+            <scale>1 1 1</scale>
+          </mesh>
+        </geometry>
+      </visual>
+
       <!-- ================= COLLISION ================= -->
       <collision name="body_collision">
         <geometry>
@@ -127,12 +157,42 @@
       <direction>0 0 1</direction>
     </plugin>
 
+    <!-- ================= Disturbance ================= -->
+
+    <plugin name="disturbance_north" filename="libgazebo_ros_thruster.so">
+      <link_name>body_link</link_name>
+      <ros_topic>/lander/disturbance/north</ros_topic>
+      <offset>1.0 0.0 -0.5</offset>
+      <direction>0 0 1</direction>
+    </plugin>
+
+    <plugin name="disturbance_east" filename="libgazebo_ros_thruster.so">
+      <link_name>body_link</link_name>
+      <ros_topic>/lander/disturbance/east</ros_topic>
+      <offset>0.0 1.0 -0.5</offset>
+      <direction>0 0 1</direction>
+    </plugin>
+
+    <plugin name="disturbance_south" filename="libgazebo_ros_thruster.so">
+      <link_name>body_link</link_name>
+      <ros_topic>/lander/disturbance/south</ros_topic>
+      <offset>-1.0 0.0 -0.5</offset>
+      <direction>0 0 1</direction>
+    </plugin>
+
+    <plugin name="disturbance_west" filename="libgazebo_ros_thruster.so">
+      <link_name>body_link</link_name>
+      <ros_topic>/lander/disturbance/west</ros_topic>
+      <offset>0.0 -1.0 -0.5</offset>
+      <direction>0 0 1</direction>
+    </plugin>
+
     <!-- ================= MASS UPDATER ================= -->
     <!--
     <plugin name="mass_updater_plugin" filename="libgazebo_ros_mass_updater.so">
       <link_name>body_link</link_name>
     </plugin>
     -->
-    
+
   </model>
 </sdf>

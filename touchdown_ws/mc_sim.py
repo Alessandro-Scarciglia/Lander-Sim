@@ -3,7 +3,7 @@ import subprocess
 import time
 
 # Parameters configuration
-NUM_RUNS = 5                 
+NUM_RUNS = 100                 
 LAUNCH_FILE = 'headless_launch.py'
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -21,6 +21,8 @@ def main():
     print(f" Config Path: {CONFIG_PATH}")
     print(f" Launch Command: {' '.join(LAUNCH_COMMAND)}")
     print("==================================================================")
+
+    os.environ['MC_ENABLE_PLOTS'] = 'False'
 
     statistics = {"successes": 0, "failures": 0}
     absolute_start_time = time.time()

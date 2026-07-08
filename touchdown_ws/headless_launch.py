@@ -40,6 +40,13 @@ def generate_launch_description():
         executable='thrusters_node',
         output='screen'
     )
+
+    psi_disturbance_node = Node(
+        package='lander_py',
+        executable='psi_disturbance_node',
+        output='screen',
+        sigterm_timeout='15.0'
+    )
     
     data_logger_node = Node(
         package='lander_py',
@@ -57,7 +64,7 @@ def generate_launch_description():
     )
 
     unpause_gazebo = TimerAction(
-        period=4.0,
+        period=1.5,
         actions=[
             ExecuteProcess(
                 cmd=['ros2', 'service', 'call', '/unpause_physics', 'std_srvs/srv/Empty'],
@@ -68,8 +75,9 @@ def generate_launch_description():
 
     return LaunchDescription([
         gzserver_launch,
-        TimerAction(period=2.0, actions=[thrusters_node]),
-        TimerAction(period=2.0, actions=[data_logger_node]),
-        TimerAction(period=2.0, actions=[thruster_logger_node]),
+        TimerAction(period=0.5, actions=[thrusters_node]),
+        TimerAction(period=0.5, actions=[psi_disturbance_node]),
+        TimerAction(period=0.5, actions=[data_logger_node]),
+        TimerAction(period=0.5, actions=[thruster_logger_node]),
         unpause_gazebo
     ])

@@ -52,6 +52,15 @@ ANG_X_RANGE = scenario_cfg["ang_x_range"]
 ANG_Y_RANGE = scenario_cfg["ang_y_range"]
 ANG_Z_RANGE = scenario_cfg["ang_z_range"]
 
+# Plugin parameters
+kp_surface = scenario_cfg["kp_surface"]
+kp_rock = scenario_cfg["kp_rock"]
+kd_surface = scenario_cfg["kd_surface"]
+kd_rock = scenario_cfg["kd_rock"]
+dust_thickness = scenario_cfg["dust_thickness"]
+mu_surface = scenario_cfg["mu_surface"]
+mu_rock = scenario_cfg["mu_rock"]
+
 # Mesh loading 
 print(f"Loading mesh from: {MESH_PATH}...")
 try:
@@ -120,6 +129,13 @@ def generate_kinematics():
         new_world = new_world.replace("{ANG_X}", f"{ang_x:.5f}")
         new_world = new_world.replace("{ANG_Y}", f"{ang_y:.5f}")
         new_world = new_world.replace("{ANG_Z}", f"{ang_z:.5f}")
+        new_world = new_world.replace("{KP_S}", f"{kp_surface:.5f}")
+        new_world = new_world.replace("{KP_R}", f"{kp_rock:.5f}")
+        new_world = new_world.replace("{KD_S}", f"{kd_surface:.5f}")
+        new_world = new_world.replace("{KD_R}", f"{kd_rock:.5f}")
+        new_world = new_world.replace("{MU_S}", f"{mu_surface:.5f}")
+        new_world = new_world.replace("{MU_R}", f"{mu_rock:.5f}")
+        new_world = new_world.replace("{THICK}", f"{dust_thickness:.5f}")
 
         with open(OUTPUT_WORLD, "w") as file:
             file.write(new_world)
