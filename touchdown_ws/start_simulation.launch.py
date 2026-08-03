@@ -51,7 +51,8 @@ def generate_launch_description():
         package='lander_py',
         executable='data_logger_node',
         output='screen',
-        sigterm_timeout='15.0'  
+        sigterm_timeout='25.0' ,
+        on_exit=[EmitEvent(event=Shutdown())] 
     )
 
     shock_absorber_logger_node = Node(
@@ -65,8 +66,7 @@ def generate_launch_description():
         package='lander_py',
         executable='thruster_logger_node',
         output='screen',
-        sigterm_timeout='15.0',  
-        on_exit=[EmitEvent(event=Shutdown())]
+        sigterm_timeout='15.0'       
     )
 
     

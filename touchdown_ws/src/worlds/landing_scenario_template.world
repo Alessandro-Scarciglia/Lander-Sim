@@ -29,7 +29,7 @@
         <visual name='visual'>
           <geometry>
             <mesh>
-              <uri>model://terrain_model/meshes/moon_0_double.stl</uri>
+              <uri>model://terrain_model/meshes/terrain_cropped.stl</uri>
               <scale>1 1 1</scale>
             </mesh>
           </geometry>
@@ -37,7 +37,7 @@
         <collision name='collision'>
           <geometry>
             <mesh>
-              <uri>model://terrain_model/meshes/moon_0_double.stl</uri>
+              <uri>model://terrain_model/meshes/terrain_cropped.stl</uri>
               <scale>1 1 1</scale>
             </mesh>
           </geometry>
@@ -113,7 +113,7 @@
     <!-- ======================== -->
     <gui fullscreen='0'>
       <camera name='user_camera'>
-        <pose>68.1 49.43 28.56 0 0.159981 3.075784</pose>
+        <pose>18.0 18.0 -148.0 0 0.18 -2.65</pose>
         <view_controller>orbit</view_controller>
         <projection_type>perspective</projection_type>
       </camera>

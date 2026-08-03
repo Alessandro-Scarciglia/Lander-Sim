@@ -4,7 +4,7 @@
 simulation_stop:
   epsilon: 0.06
   timeout_after_touchdown: 8.0
-  steady_req_duration: 8.0
+  steady_req_duration: 4.0
 
 # Body and passenger generation parameters (generate_body.py)
 body_generation:
@@ -51,9 +51,9 @@ body_generation:
 # Landing scenario parameters (generate_scenario.py)
 
 landing_scenario:
-  pos_x_range: [55.0, 60.0]
-  pos_y_range: [45.0, 55.0]
-  altitude_range: [1.5, 1.8]
+  pos_x_range: [-50.0, 50.0]
+  pos_y_range: [-50.0, 50.0]
+  altitude_range: [0.3, 1.0]
   roll_range_deg: [-5.0, 5.0]  
   pitch_range_deg: [-5.0, 5.0]
   yaw_range_deg: [-5.0, 5.0]
@@ -63,10 +63,10 @@ landing_scenario:
   ang_x_range: [-0.1, 0.1]
   ang_y_range: [-0.1, 0.1]
   ang_z_range: [-0.05, 0.05]
-  kp_surface: 10.0
-  kp_rock: 4000.0
-  kd_surface: 1.0  
-  kd_rock: 400.0
+  kp_surface: 10000.0
+  kp_rock: 1000000.0
+  kd_surface: 1000.0  
+  kd_rock: 10000.0
   dust_thickness: 0.05
   mu_surface: 0.5
   mu_rock: 1.0
@@ -75,7 +75,7 @@ landing_scenario:
 # Thrusters parameters (thrusters.py)
 
 thrusters:
-  num_engines: 3
+  num_engines: 2
   t_min: 3000.0
   t_max: 6000.0
   engine_max_thrust: 6000.0
@@ -102,17 +102,17 @@ leg_generation:
   b_strut_radius: 0.05
   b_piston_mass: 10.0
   b_piston_radius: 0.035
-  df_k: 5000000.0
+  df_k: 2000000.0
   df_c: 15000.0
   df_fric: 0.0
-  df_limit: 0.7
+  df_limit: 0.75
   df_crush_force_stage1: 3000.0
-  df_crush_force_stage2: 18000.0
-  df_stroke_limit_stage_1: 0.254
+  df_crush_force_stage2: 15000.0
+  df_stroke_limit_stage_1: 0.25
   df_stroke_limit_stage_2: 0.7
   df_bottomout_stiffness: 10000000
   df_rebound_damping: 15000.0
-  b_k: 5000000.0
+  b_k: 2000000.0
   b_c: 15000.0
   b_fric: 0.0
   b_limit: 0.4

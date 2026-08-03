@@ -29,7 +29,7 @@
         <visual name='visual'>
           <geometry>
             <mesh>
-              <uri>model://terrain_model/meshes/moon_0_double.stl</uri>
+              <uri>model://terrain_model/meshes/terrain_cropped.stl</uri>
               <scale>1 1 1</scale>
             </mesh>
           </geometry>
@@ -37,7 +37,7 @@
         <collision name='collision'>
           <geometry>
             <mesh>
-              <uri>model://terrain_model/meshes/moon_0_double.stl</uri>
+              <uri>model://terrain_model/meshes/terrain_cropped.stl</uri>
               <scale>1 1 1</scale>
             </mesh>
           </geometry>
@@ -45,8 +45,8 @@
             <contact>
               <collide_without_contact>0</collide_without_contact>
               <ode>
-                <kp>10.00000</kp>
-                <kd>1.00000</kd>
+                <kp>10000.00000</kp>
+                <kd>1000.00000</kd>
                 <max_vel>0.0</max_vel>
                 <min_depth>0.0</min_depth>
               </ode>
@@ -62,7 +62,7 @@
               <threshold>1</threshold>
             </bounce>
           </surface>
-          <max_contacts>20</max_contacts>
+          <max_contacts>40</max_contacts>
         </collision>
       </link>
     </model>
@@ -113,7 +113,7 @@
     <!-- ======================== -->
     <gui fullscreen='0'>
       <camera name='user_camera'>
-        <pose>68.1 49.43 28.56 0 0.159981 3.075784</pose>
+        <pose>18.0 18.0 -148.0 0 0.18 -2.65</pose>
         <view_controller>orbit</view_controller>
         <projection_type>perspective</projection_type>
       </camera>
@@ -124,11 +124,11 @@
     <!-- ======================== -->
     <include>
       <uri>model://lander_model</uri>
-      <pose>58.27268 47.34659 21.85658 0.00161 -0.02228 -0.04286</pose> <!-- z=30 per partire sopra il
+      <pose>9.76958 -15.52901 -151.23865 -0.08701 -0.02680 0.05640</pose> <!-- z=30 per partire sopra il
       terreno -->
       <plugin name="initial_velocity_plugin" filename="libInitialVelocityPlugin.so">
-        <linear_velocity>0.14411 -0.06036 -0.39549</linear_velocity>
-        <angular_velocity>-0.04315 -0.00836 0.02377</angular_velocity>
+        <linear_velocity>0.03193 -0.13532 -0.47170</linear_velocity>
+        <angular_velocity>-0.02636 -0.07229 -0.02537</angular_velocity>
       </plugin>
     </include>
 
@@ -147,10 +147,10 @@
     <!-- ====================================================== -->
     <plugin name="dynamic_terrain" filename="libDynamicTerrainPlugin.so">
       <terrain_name>terrain_model</terrain_name> 
-      <kp_surface>10.00000</kp_surface>
-      <kp_rock>4000.00000</kp_rock>
-      <kd_surface>1.00000</kd_surface> 
-      <kd_rock>400.00000</kd_rock>
+      <kp_surface>10000.00000</kp_surface>
+      <kp_rock>1000000.00000</kp_rock>
+      <kd_surface>1000.00000</kd_surface> 
+      <kd_rock>10000.00000</kd_rock>
       <mu_surface>0.50000</mu_surface>
       <mu_rock>1.00000</mu_rock>
       <dust_thickness>0.05000</dust_thickness>

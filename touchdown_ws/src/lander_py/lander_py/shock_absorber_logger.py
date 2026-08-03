@@ -25,6 +25,8 @@ class DFLogger(Node):
         self.plots_dir = os.path.join(WS_ROOT, "plots")
         os.makedirs(self.plots_dir, exist_ok=True)
 
+        self.is_recording = True
+
         self.data = {
             "leg1": {"pos": [], "force": []},
             "leg2": {"pos": [], "force": []},
@@ -41,11 +43,13 @@ class DFLogger(Node):
         self.get_logger().info("DF Logger started")
 
     def stop_cb(self, msg):
-        if msg.data:
-            self.get_logger().info("Automatic stop signal received! Generating plots...")
-            os.kill(os.getpid(), signal.SIGINT)
+        if msg.data and self.is_recording:
+            self.get_logger().info("Automatic stop signal received! Freezing data collection...")
+            self.is_recording = False
 
     def callback(self, msg, leg):
+        if not self.is_recording:
+            return
         self.data[leg]["pos"].append(msg.x)
         self.data[leg]["force"].append(msg.y)
 
@@ -84,17 +88,20 @@ def main():
     try:
         rclpy.spin(node)
 
-    except KeyboardInterrupt:
-        print("\n[DFLogger] Starting pre-shutdown chart generation...")
+    except (KeyboardInterrupt, SystemExit):
+        pass
 
     finally:
-        signal.signal(signal.SIGINT, signal.SIG_IGN)
-        ENABLE_PLOTS = os.environ.get('MC_ENABLE_PLOTS', 'True').lower() == 'true'
-        if ENABLE_PLOTS:
-            node.save_plot()
         node.destroy_node()
         if rclpy.ok():
             rclpy.shutdown()
+        
+        ENABLE_PLOTS = os.environ.get('MC_ENABLE_PLOTS', 'True').lower() == 'true'
+        signal.signal(signal.SIGINT, signal.SIG_IGN)
+
+        if ENABLE_PLOTS:
+            print("\n[DFLogger] Starting chart generation...")
+            node.save_plot()        
 
 
 if __name__ == "__main__":

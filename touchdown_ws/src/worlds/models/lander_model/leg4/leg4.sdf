@@ -89,10 +89,10 @@
         <pose>0 0 0 0 0 0</pose>
         <geometry><cylinder><radius>0.25</radius><length>0.05</length></cylinder></geometry>
         <surface>
-          <contact><ode><kp>5000000.0</kp><kd>50000</kd><max_vel>0.0</max_vel><min_depth>0.0</min_depth></ode></contact>
+          <contact><ode><kp>500000.0</kp><kd>20000.0</kd><max_vel>0.0</max_vel><min_depth>0.0</min_depth></ode></contact>
           <friction><ode><mu>1.0</mu><mu2>1.0</mu2></ode></friction>
         </surface>
-        <max_contacts>20</max_contacts>
+        <max_contacts>40</max_contacts>
       </collision>
       <visual name="footpad_visual"><pose>0 0 0 0 0 0</pose><geometry><cylinder><radius>0.25</radius><length>0.05</length></cylinder></geometry><material><ambient>0.2 0.2 0.2 1</ambient><diffuse>0.2 0.2 0.2 1</diffuse></material></visual>
       <sensor name="foot_contact_sensor" type="contact">
@@ -121,7 +121,7 @@
       <parent>link_DF_strut</parent><child>link_DF_piston</child>
       <axis>
         <xyz>0 0 1</xyz>
-        <limit><lower>0.0</lower><upper>0.70</upper><effort>100000.0</effort><velocity>3.0</velocity></limit>
+        <limit><lower>0.0</lower><upper>0.75</upper><effort>100000.0</effort><velocity>3.0</velocity></limit>
         <dynamics><spring_reference>0.0</spring_reference><spring_stiffness>0.0</spring_stiffness><damping>0.0</damping><friction>0.0</friction></dynamics>
       </axis>
     </joint>
@@ -174,11 +174,11 @@
       <topic_name>leg4/df_force_displacement</topic_name>
       <joint_name>shock_absorber_DF</joint_name>
       <dual_stage>true</dual_stage>
-      <stiffness>5000000.0</stiffness>
+      <stiffness>2000000.0</stiffness>
       <damping>15000.0</damping>
       <crush_force_stage_1>3000.0</crush_force_stage_1>
-      <stroke_limit_stage_1>0.254</stroke_limit_stage_1>
-      <crush_force_stage_2>18000.0</crush_force_stage_2>
+      <stroke_limit_stage_1>0.250</stroke_limit_stage_1>
+      <crush_force_stage_2>15000.0</crush_force_stage_2>
       <total_stroke_limit>0.700</total_stroke_limit>
       <rebound_damping>15000.0</rebound_damping>
       <bottomout_stiffness>10000000.0</bottomout_stiffness>
@@ -190,7 +190,7 @@
       <topic_name>leg4/b1_force_displacement</topic_name>
       <joint_name>joint_B1_prismatic</joint_name>
       <crush_force>6000.0</crush_force>
-      <stiffness>5000000.0</stiffness>
+      <stiffness>2000000.0</stiffness>
       <damping>15000.0</damping>
       <rebound_damping>15000.0</rebound_damping>
       <compression_dir>1.0</compression_dir>
@@ -204,7 +204,7 @@
       <joint_name>joint_B2_prismatic</joint_name>
       <crush_force>6000.0</crush_force>
       <rebound_damping>15000.0</rebound_damping>
-      <stiffness>5000000.0</stiffness>
+      <stiffness>2000000.0</stiffness>
       <damping>15000.0</damping>
       <compression_dir>1.0</compression_dir>
       <bidirectional>true</bidirectional>

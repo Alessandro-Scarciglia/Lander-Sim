@@ -187,12 +187,6 @@
       <direction>0 0 1</direction>
     </plugin>
 
-    <!-- ================= MASS UPDATER ================= -->
-    <!--
-    <plugin name="mass_updater_plugin" filename="libgazebo_ros_mass_updater.so">
-      <link_name>body_link</link_name>
-    </plugin>
-    -->
-
+    
   </model>
 </sdf>

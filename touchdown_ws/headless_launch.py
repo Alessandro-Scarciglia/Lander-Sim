@@ -52,6 +52,14 @@ def generate_launch_description():
         package='lander_py',
         executable='data_logger_node',
         output='screen',
+        sigterm_timeout='25.0',
+        on_exit=[EmitEvent(event=Shutdown())]  
+    )
+
+    shock_absorber_logger_node = Node(
+        package='lander_py',
+        executable='df_logger_node',
+        output='screen',
         sigterm_timeout='15.0'  
     )
 
@@ -59,8 +67,8 @@ def generate_launch_description():
         package='lander_py',
         executable='thruster_logger_node',
         output='screen',
-        sigterm_timeout='15.0',  
-        on_exit=[EmitEvent(event=Shutdown())]
+        sigterm_timeout='15.0'
+        
     )
 
     unpause_gazebo = TimerAction(
@@ -78,6 +86,7 @@ def generate_launch_description():
         TimerAction(period=0.5, actions=[thrusters_node]),
         TimerAction(period=0.5, actions=[psi_disturbance_node]),
         TimerAction(period=0.5, actions=[data_logger_node]),
+        TimerAction(period=0.5, actions=[shock_absorber_logger_node]),
         TimerAction(period=0.5, actions=[thruster_logger_node]),
         unpause_gazebo
     ])

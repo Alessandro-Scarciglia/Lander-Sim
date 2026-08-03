@@ -53,6 +53,7 @@ class ThrustLogger(Node):
         
         self.start_time = None        
         self.t_start = None
+        self.is_recording = True
 
         self.get_logger().info("Thrust Logger STARTED")
         
@@ -60,8 +61,8 @@ class ThrustLogger(Node):
 
     def stop_cb(self, msg):
         if msg.data == True:
-            self.get_logger().info("Automatic stop signal received! Generating plots...")
-            os.kill(os.getpid(), signal.SIGINT)
+            self.get_logger().info("Automatic stop signal received! Freezing data collection...")
+            self.is_recording = False
         
     def touchdown_time_cb(self, msg):
         absolute_td_time = msg.data        
@@ -91,6 +92,8 @@ class ThrustLogger(Node):
         self.pub_impact_thrust.publish(reply_msg)
     
     def tstart_cb(self, msg):
+        if not self.is_recording:
+            return
         self.t_start = msg.data
 
     def get_relative_time(self):
@@ -100,16 +103,22 @@ class ThrustLogger(Node):
         return now - self.start_time
 
     def left_cb(self, msg):
+        if not self.is_recording:
+            return
         current_time = self.get_relative_time()
         self.left_time.append(current_time)
         self.left_data.append(msg.data)
 
     def right_cb(self, msg):
+        if not self.is_recording:
+            return
         current_time = self.get_relative_time()
         self.right_time.append(current_time)
         self.right_data.append(msg.data)
 
     def central_cb(self, msg):
+        if not self.is_recording:
+            return
         current_time = self.get_relative_time()
         self.central_time.append(current_time)
         self.central_data.append(msg.data)
@@ -121,12 +130,16 @@ def main(args=None):
     node = ThrustLogger()
     try:
         rclpy.spin(node)
-    except KeyboardInterrupt:
-        print("\n[ThrustLogger] Starting pre-shutdown chart generation...")
+    except (KeyboardInterrupt, SystemExit):
+        pass
     finally:
+        node.destroy_node()
+        if rclpy.ok():
+            rclpy.shutdown()
 
         ENABLE_PLOTS = os.environ.get('MC_ENABLE_PLOTS', 'True').lower() == 'true'
         signal.signal(signal.SIGINT, signal.SIG_IGN)
+
         # Copy data
         left_time = list(node.left_time)
         left_data = list(node.left_data)
@@ -138,14 +151,10 @@ def main(args=None):
         central_data = list(node.central_data)
 
         # Copy t_start
-        t_start = node.t_start
-
-        node.destroy_node()
-
-        if rclpy.ok():
-            rclpy.shutdown()
+        t_start = node.t_start        
         
         if ENABLE_PLOTS:
+            print("\n[ThrustLogger] Starting chart generation...")
             # Calculation of real curve times
             curve_t1 = 1.35
             curve_t2 = 2.0
@@ -163,7 +172,6 @@ def main(args=None):
                 t1, t2, t3 = curve_t1, curve_t2, curve_t3
 
             # Plot
-
             fig, axs = plt.subplots(3, 1, figsize=(12, 12), sharex=True)
             fig.suptitle('Individual Motor Thrust Analysis (MECO)', fontsize=16, fontweight='bold')
 
@@ -208,8 +216,8 @@ def main(args=None):
             save_path = os.path.join(node.plots_dir, '03_thrust_profile.png')
             fig.savefig(save_path, dpi=300)
 
-            print(f"\nPlot saved:")
-            print(save_path)
+            print(f"Plot saved: {save_path}")
+            
 
 
 if __name__ == '__main__':

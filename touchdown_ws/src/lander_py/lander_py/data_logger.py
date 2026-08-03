@@ -7,12 +7,14 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import math
 from std_msgs.msg import Bool
-import time
+import re
 import signal
 import os
 import yaml
 import csv
 from std_msgs.msg import Float64
+import numpy as np
+import trimesh
 
 class FlightDataLogger(Node):
     def __init__(self, target_model="lander_model"):
@@ -24,29 +26,32 @@ class FlightDataLogger(Node):
 
         SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))        
         if "install" in SCRIPT_DIR:
-            WS_ROOT = SCRIPT_DIR.split("install")[0]            
+            self.ws_root = SCRIPT_DIR.split("install")[0]            
         else:
-            WS_ROOT = SCRIPT_DIR.split("src")[0]
+            self.ws_root = SCRIPT_DIR.split("src")[0]
 
-        CONFIG_PATH = os.path.join(WS_ROOT, "config.yaml")
-        self.plots_dir = os.path.join(WS_ROOT, "plots")
+        CONFIG_PATH = os.path.join(self.ws_root, "config.yaml")
+        self.plots_dir = os.path.join(self.ws_root, "plots")
         os.makedirs(self.plots_dir, exist_ok=True)
 
         try:
             with open(CONFIG_PATH, 'r') as file:
-                config = yaml.safe_load(file)
+                self.config = yaml.safe_load(file)
             self.get_logger().info("Config.yaml file successfully uploaded to the Data Logger!")
         except FileNotFoundError:
             self.get_logger().error(f"Unable to find the config.yaml file at the path: {CONFIG_PATH}")
             # Fallback
-            config = {"simulation_stop": {"epsilon": 0.05, "timeout_after_touchdown": 5.0, "steady_req_duration": 1.0}}      
+            self.config = {"simulation_stop": {"epsilon": 0.05, "timeout_after_touchdown": 5.0, "steady_req_duration": 1.0}}      
         
         self.times_tel = []
         self.start_time_tel = None
         self.times_forces = []
         self.start_time_forces = None
-        self.impact_thrust_total = 0.0
-        
+        self.impact_thrust_total = 0.0        
+
+        self.shutdown_initiated = False
+        self.is_recording = True  
+
         self.pos_x, self.pos_y, self.pos_z = [], [], []
         self.vel_x, self.vel_y, self.vel_z = [], [], []
         self.roll, self.pitch, self.yaw = [], [], []
@@ -55,10 +60,14 @@ class FlightDataLogger(Node):
         self.legs = ['leg1', 'leg2', 'leg3', 'leg4']
         self.axes = ['x', 'y', 'z']
         self.history_forces = {leg: {axis: [] for axis in self.axes} for leg in self.legs} 
-        self.first_leg_touch = None       
-        
+        self.first_leg_touch = None
+        self.current_f = {
+            leg: {'x':0,'y':0,'z':0}
+            for leg in self.legs
+        }       
+                
         # Shutdown parameters (STEADY STATE & TIMEOUT)
-        sim_stop_cfg = config.get("simulation_stop", {})
+        sim_stop_cfg = self.config.get("simulation_stop", {})
         self.epsilon = sim_stop_cfg.get("epsilon", 0.05)                 
         self.timeout_after_touchdown = sim_stop_cfg.get("timeout_after_touchdown", 5.0) 
         self.steady_req_duration = sim_stop_cfg.get("steady_req_duration", 1.0) 
@@ -91,8 +100,9 @@ class FlightDataLogger(Node):
         self.get_logger().info(">>> AUTO-STOP ENABLED: The node will stop at steady state or timeout <<<")
 
     
-    def _shutdown_sequence(self, reason):
-        raise SystemExit(f"Simulation Auto-Stop: {reason}")
+    def _trigger_exit(self):
+        self.get_logger().info("Master node initiating global shutdown sequence...")
+        raise SystemExit("Simulation sequence completed.")
 
     def euler_from_quaternion(self, x, y, z, w):        
         t0 = +2.0 * (w * x + y * z)
@@ -111,10 +121,15 @@ class FlightDataLogger(Node):
         return roll_x, pitch_y, yaw_z
 
     def impact_thrust_callback(self, msg):
+        if not self.is_recording:
+            return            
         self.impact_thrust_total = msg.data
         self.get_logger().info(f"Received impact thrust from ThrustLogger: {self.impact_thrust_total:.2f} N")
 
     def telemetry_callback(self, msg):
+        if not self.is_recording:
+            return
+        
         if self.target_model in msg.name:
             # Get the model index
             idx = msg.name.index(self.target_model)
@@ -157,13 +172,14 @@ class FlightDataLogger(Node):
                 
                 # Timeout Control
                 if (now - self.touchdown_time) > self.timeout_after_touchdown:
-                    self.get_logger().info("TIMEOUT reached after touchdown.")
-                    msg = Bool()
-                    msg.data = True
-                    self.pub_stop.publish(msg)                    
-                    self.destroy_subscription(self.sub_tel)
-                    # Create a ROS timer
-                    self.create_timer(0.5, lambda: self._shutdown_sequence("Timeout"))
+                    if not self.shutdown_initiated:
+                        self.shutdown_initiated = True
+                        self.is_recording = False
+                        self.get_logger().info("TIMEOUT reached after touchdown.")
+                        msg = Bool()
+                        msg.data = True
+                        self.pub_stop.publish(msg)                         
+                        self.create_timer(1.5, self._trigger_exit)
 
                 # Steady State Control (Speed below epsilon)
                 is_steady = (
@@ -175,18 +191,22 @@ class FlightDataLogger(Node):
                     if self.steady_start_time is None:
                         self.steady_start_time = now 
                     elif (now - self.steady_start_time) > self.steady_req_duration:
-                        self.get_logger().info(f"STEADY STATE reached (Variables < {self.epsilon}).")                       
-                        msg = Bool()
-                        msg.data = True
-                        self.pub_stop.publish(msg)                        
-                        self.destroy_subscription(self.sub_tel)
-                        # Create a ROS timer
-                        self.create_timer(0.5, lambda: self._shutdown_sequence("Steady State"))
+                        if not self.shutdown_initiated:
+                            self.shutdown_initiated = True
+                            self.is_recording = False
+                            self.get_logger().info(f"STEADY STATE reached (Variables < {self.epsilon}).")                       
+                            msg = Bool()
+                            msg.data = True
+                            self.pub_stop.publish(msg)                        
+                            self.create_timer(1.5, self._trigger_exit)
                 else:
                     self.steady_start_time = None 
            
 
     def contact_callback(self, msg):
+        if not self.is_recording:
+            return
+        
         now = self.get_clock().now().nanoseconds / 1e9
 
         if self.start_time_forces is None:
@@ -195,37 +215,85 @@ class FlightDataLogger(Node):
         t = now - self.start_time_forces
         self.times_forces.append(t)
 
-        # Reset forces for current sample
-        current_f = {leg: {'x': 0.0, 'y': 0.0, 'z': 0.0} for leg in self.legs}
+        contact_counts = {leg: 0 for leg in self.legs}
+        
+        new_f = {
+            leg: {'x': 0.0, 'y': 0.0, 'z': 0.0}
+            for leg in self.legs
+        }
 
-        # Read all active contact states
         for state in msg.states:
             col_name = state.collision1_name
             for leg in self.legs:
                 if leg in col_name:
-                    current_f[leg]['x'] += state.total_wrench.force.x
-                    current_f[leg]['y'] += state.total_wrench.force.y
-                    current_f[leg]['z'] += state.total_wrench.force.z
+                    new_f[leg]['x'] += state.total_wrench.force.x
+                    new_f[leg]['y'] += state.total_wrench.force.y
+                    new_f[leg]['z'] += state.total_wrench.force.z
+                    contact_counts[leg] += 1
+
+        for leg in self.legs:
+            if contact_counts[leg] > 0:
+                self.current_f[leg]['x'] = (new_f[leg]['x'] / contact_counts[leg])
+                self.current_f[leg]['y'] = (new_f[leg]['y'] / contact_counts[leg])
+                self.current_f[leg]['z'] = (new_f[leg]['z'] / contact_counts[leg])                                
+
+        
 
         # Save force history
         for leg in self.legs:
             for axis in self.axes:
-                self.history_forces[leg][axis].append(current_f[leg][axis])
+                self.history_forces[leg][axis].append(self.current_f[leg][axis])
 
         # Touchdown detection
         if self.touchdown_time is None:
             for leg in self.legs:
-                if abs(current_f[leg]['z']) > 5.0:
+                if abs(self.current_f[leg]['z']) > 5.0:
                     self.touchdown_time = now
                     self.first_leg_touch = leg
                     self.get_logger().info(f"TOUCHDOWN DETECTED! ({leg}). Timers started.")
                     msg_td = Float64()
                     msg_td.data = now 
                     self.pub_touchdown.publish(msg_td)
-                    break
-        
+                    break         
 
        
+def read_mass_from_sdf(filepath):        
+    try:
+        with open(filepath, 'r') as file:
+            content = file.read()                
+            match = re.search(r'<mass>\s*([0-9]*\.?[0-9]+)\s*</mass>', content)
+            if match: return float(match.group(1))
+    except FileNotFoundError:
+        return 0.0
+    return 0.0
+
+
+def read_dry_mass_from_sdf(filepath):        
+    try:
+        with open(filepath, 'r') as file:
+            content = file.read()             
+            match = re.search(r'<!-- METADATA_DRY_MASS:\s*([0-9]*\.?[0-9]+)\s*-->', content)
+            if match: 
+                return float(match.group(1))
+    except FileNotFoundError:
+        pass
+    return 0.0
+
+def calculate_leg_mass(leg_cfg):        
+        # 4 Trusses (C1D, C2D, A1D, A2D)
+        mass = 4 * leg_cfg.get("truss_mass", 0.0) 
+
+        # DF System
+        mass += leg_cfg.get("strut_DF_mass", 0.0)
+        mass += leg_cfg.get("piston_DF_mass", 0.0)
+        
+        # B Systems (B1 e B2)
+        mass += 2 * (leg_cfg.get("b_strut_mass", 0.0) + leg_cfg.get("b_piston_mass", 0.0))
+        
+        # link_D, link_E, link_foot
+        mass += 10.0 + 10.0 + 5.0 
+        
+        return mass
 
 def main(args=None):
     rclpy.init(args=args)
@@ -233,14 +301,16 @@ def main(args=None):
     
     try:
         rclpy.spin(node)
-    except KeyboardInterrupt:
-        print("\nSimulation interrupted by user! Generating all plots...")
-    except SystemExit as e:
-        print(f"\n{e}. Generating all plots...") 
+    except (KeyboardInterrupt, SystemExit) as e:        
+        pass    
     finally:
+        node.destroy_node()
+        if rclpy.ok():
+            rclpy.shutdown()
 
         ENABLE_PLOTS = os.environ.get('MC_ENABLE_PLOTS', 'True').lower() == 'true'
-        # data extraction 
+
+        # Data extraction                 
         signal.signal(signal.SIGINT, signal.SIG_IGN)
         t_tel = list(node.times_tel)
         t_forces = list(node.times_forces)
@@ -250,18 +320,85 @@ def main(args=None):
         wx, wy, wz = list(node.ang_x), list(node.ang_y), list(node.ang_z)
         
         f_imp = {leg: {ax: list(node.history_forces[leg][ax]) for ax in node.axes} for leg in node.legs}
-        if len(t_tel) > 0:
+
+        # Mass calculation
+        model_dir = os.path.join(node.ws_root, "src", "worlds", "models", "lander_model")
+        mass_body = read_mass_from_sdf(os.path.join(model_dir, "body", "body.sdf"))
+        mass_pass = read_mass_from_sdf(os.path.join(model_dir, "passenger", "passenger.sdf"))
+        dry_mass = read_dry_mass_from_sdf(os.path.join(model_dir, "body", "body.sdf"))
+        leg_cfg = node.config["leg_generation"]
+        mass_legs = 4 * calculate_leg_mass(leg_cfg)
+
+        total_mass = mass_body + mass_pass + mass_legs
+
+        # Mass error calculation
+        if len(t_forces) > 0:            
+            final_fz = sum([f_imp[leg]['z'][-1] for leg in node.legs if len(f_imp[leg]['z']) > 0])            
+            gazebo_mass = abs(final_fz) / 1.625                 
+            mass_error_kg = gazebo_mass - total_mass
+            mass_error_pct = (mass_error_kg / total_mass) * 100.0 if total_mass > 0 else 0.0            
+            print("\n" + "="*50)
+            print(f"[MASS CHECK] Real total mass: {total_mass:.2f} kg")
+            print(f"[MASS CHECK] Gazebo mass: {gazebo_mass:.2f} kg")
+            print(f"[MASS CHECK] Steady-State error: {mass_error_kg:.2f} kg ({mass_error_pct:.2f}%)")
+            print("="*50 + "\n")
+        
+
+        # Relative height calculation
+        terrain_path = os.path.join(node.ws_root, "src", "worlds", "models", "terrain_model", "meshes", "terrain_cropped.stl")
+        terrain_mesh = None
+        pz_rel = list(pz) 
+
+        try:
+            terrain_mesh = trimesh.load(terrain_path)
+            if len(px) > 0:                
+                ray_origins_all = np.column_stack((px, py, np.full(len(px), 100.0)))
+                ray_directions_all = np.tile([0, 0, -1], (len(px), 1))
+                
+                locations, index_ray, _ = terrain_mesh.ray.intersects_location(
+                    ray_origins=ray_origins_all,
+                    ray_directions=ray_directions_all
+                )
+                
+                # Multiple intersection
+                z_terr_dict = {}
+                for loc, idx in zip(locations, index_ray):
+                    if idx not in z_terr_dict or loc[2] > z_terr_dict[idx]:
+                        z_terr_dict[idx] = loc[2]
+                
+                # Terrain height
+                for i in range(len(pz)):
+                    if i in z_terr_dict:
+                        pz_rel[i] = pz[i] - z_terr_dict[i]
+        except Exception as e:
+            print(f"Warning: Failed to calculate relative Z from the mesh ({e})")
+
+        min_belly_clearance_m = 0.0
+
+        if ENABLE_PLOTS and len(t_tel) > 0:
             print("\n--- INITIAL VALUES RECORDED (t=0) ---")
-            print(f"Position [m]:        X= {px[0]:.4f} | Y= {py[0]:.4f} | Z= {pz[0]:.4f}")
+            print(f"Position [m]:        X= {px[0]:.4f} | Y= {py[0]:.4f} | Z= {pz_rel[0]:.4f}")
             print(f"Attitude [Degree]:   R= {ro[0]:.4f} | P= {pi[0]:.4f} | Y= {ya[0]:.4f}")
             print(f"Linear Vel. [m/s]:   Vx={vx[0]:.4f} | Vy={vy[0]:.4f} | Vz={vz[0]:.4f}")
             print(f"Angular Vel. [rad/s]: Wx={wx[0]:.4f} | Wy={wy[0]:.4f} | Wz={wz[0]:.4f}")
+            print("\n--- FINAL VALUES RECORDED (t=end) ---")
+            print(f"Final Height (AGL) [m]: Z(Rel)= {pz_rel[-1]:.4f}")
+            print("----------------------------------------\n")
             print("----------------------------------------\n")
 
-        # Simulation parameters and CSV saving        
+        # Simulation parameters and CSV saving   
+
+        # Initial Condition        
+        if len(t_tel) > 0:
+            init_x, init_y, init_z = px[0], py[0], pz_rel[0]
+            init_vx, init_vy, init_vz = vx[0], vy[0], vz[0]
+            init_roll, init_pitch, init_yaw = ro[0], pi[0], ya[0]
+            init_wx, init_wy, init_wz = wx[0], wy[0], wz[0]
+        else:
+            init_x = init_y = init_z = init_vx = init_vy = init_vz = 0.0
+            init_roll = init_pitch = init_yaw = init_wx = init_wy = init_wz = 0.0     
         
         if len(t_tel) > 0:
-
             # Find the array index corresponding to the moment of touchdown.
             td_index = 0
             if node.touchdown_time:
@@ -322,14 +459,92 @@ def main(args=None):
 
             # Impact thrust
             impact_thrust_to_write = node.impact_thrust_total
+
+            # Belly clearance                     
+            try:
+                min_belly_clearance_m = 0.0
+                flag_hull_crash = False       
+                flag_thruster_crash = False                
+                if terrain_mesh is not None:                    
+                    Z_BELLY = 0.0  
+                    THRUSTER_RADIUS = 0.752 / 2.0  
+                    THRUSTER_CENTERS = [(0.0, 0.0), (1.5, 0.0), (-1.5, 0.0)]
+
+                    belly_local_points = []
+                    point_is_thruster = []
+                                        
+                    for bx in np.linspace(-2.0, 2.0, 51):
+                        for by in np.linspace(-2.0, 2.0, 51):
+                            if abs(bx) + abs(by) <= 2.828:                                
+                                # Check if the point is in the thruster
+                                is_t = False
+                                for cx, cy in THRUSTER_CENTERS:                                    
+                                    if math.hypot(bx - cx, by - cy) <= THRUSTER_RADIUS:
+                                        is_t = True
+                                        break                                        
+                                belly_local_points.append(np.array([bx, by, Z_BELLY]))
+                                point_is_thruster.append(is_t)
+                    
+                    ray_origins = []
+                    ray_directions = []
+                    belly_z_globals = []
+                    ray_is_thruster = []                
+                    
+                    start_idx = max(0, td_index - 50) 
+                    
+                    for i in range(start_idx, len(pz)):
+                        r = math.radians(ro[i])
+                        p = math.radians(pi[i])
+                        y = math.radians(ya[i])
+                        
+                        cy, sy = math.cos(y), math.sin(y)
+                        cp, sp = math.cos(p), math.sin(p)
+                        cr, sr = math.cos(r), math.sin(r)                        
+                        
+                        R_mat = np.array([
+                            [cy*cp, cy*sp*sr - sy*cr, cy*sp*cr + sy*sr],
+                            [sy*cp, sy*sp*sr + cy*cr, sy*sp*cr - cy*sr],
+                            [-sp,   cp*sr,            cp*cr]
+                        ])                        
+                        
+                        cg_pos = np.array([px[i], py[i], pz[i]])                    
+                        
+                        # Belly's points location
+                        for pt_local, is_t in zip(belly_local_points, point_is_thruster):                            
+                            pos_global = cg_pos + R_mat.dot(pt_local)                            
+                            belly_z_globals.append(pos_global[2])                             
+                            ray_origins.append([pos_global[0], pos_global[1], 100.0])
+                            ray_directions.append([0, 0, -1])                            
+                            ray_is_thruster.append(is_t)
+                    
+                    # Ray casting 
+                    locations, index_ray, _ = terrain_mesh.ray.intersects_location(
+                        ray_origins=ray_origins,
+                        ray_directions=ray_directions
+                    )
+                    
+                    clearances = []                    
+
+                    for hit_idx, loc in zip(index_ray, locations):
+                        z_terrain = loc[2] 
+                        z_belly_pt = belly_z_globals[hit_idx]
+                        is_t = ray_is_thruster[hit_idx]                        
+                        dist = z_belly_pt - z_terrain
+                        clearances.append(dist)
+                        if dist <= 0.0:
+                            flag_hull_crash = True
+                        elif is_t and dist <= 0.117:                            
+                            flag_thruster_crash = True
+                    
+                    if clearances:
+                        min_belly_clearance_m = min(clearances)
+                    
+                        
+            except Exception as e:                
+                min_belly_clearance_m = 0.0 
+                flag_hull_crash = True
+                flag_thruster_crash = True         
             
-            # Definition of success criteria
-            TILT_THRESHOLD = 20.0            
-            is_flipped = total_tilt_deg > TILT_THRESHOLD
-            is_crashed = abs(v_abs_imp) > 3.0
-            is_broken = max_leg_force > 40000.0
-            
-            mission_success = not (is_flipped or is_crashed or is_broken)
 
             # Append to CSV file
             csv_path = os.path.join(node.plots_dir, "montecarlo_summary.csv")
@@ -337,29 +552,39 @@ def main(args=None):
 
             with open(csv_path, mode='a', newline='') as f:
                 writer = csv.writer(f)
-                if not file_exists:
+                if not file_exists:                    
                     writer.writerow([
-                        'run_id', 'first_touch_leg', 'impact_angle_deg', 
+                        'run_id', 'total_mass_kg', 'body_mass_kg', 'dry_mass_kg', 'passenger_mass_kg', 'legs_mass_kg', 
+                        'init_x', 'init_y', 'init_z',
+                        'init_vx', 'init_vy', 'init_vz',
+                        'init_roll', 'init_pitch', 'init_yaw',
+                        'init_wx', 'init_wy', 'init_wz',
+                        'first_touch_leg', 'impact_angle_deg', 
                         'specific_kin_energy', 'res_accel_z', 'max_impact_vz_ms', 
                         'impact_thrust_N', 'final_total_tilt_deg', 'max_force_z_N', 
-                        'settling_time_s', 'is_flipped', 'mission_success'
+                        'settling_time_s', 'min_belly_clearance_m',
+                        'flag_hull_crash', 'flag_thruster_crash',
+                        'perceived_mass_kg', 'mass_error_kg', 'mass_error_pct' 
                     ])
                 
                 writer.writerow([
-                    run_id, first_leg, round(impact_angle_deg, 2), 
+                    run_id, round(total_mass, 2), round(mass_body, 2), round(dry_mass, 2), round(mass_pass, 2), round(mass_legs, 2),
+                    round(init_x, 4), round(init_y, 4), round(init_z, 4),
+                    round(init_vx, 4), round(init_vy, 4), round(init_vz, 4),
+                    round(init_roll, 4), round(init_pitch, 4), round(init_yaw, 4),
+                    round(init_wx, 4), round(init_wy, 4), round(init_wz, 4),
+                    first_leg, round(impact_angle_deg, 2), 
                     round(kin_energy_spec, 2), round(accel_residua_z, 2), round(vz_imp, 2), 
                     round(impact_thrust_to_write, 2), round(total_tilt_deg, 2), round(max_leg_force, 2), 
-                    round(settling_time, 2), is_flipped, mission_success
+                    round(settling_time, 2), round(min_belly_clearance_m, 4),
+                    flag_hull_crash, flag_thruster_crash,
+                    round(gazebo_mass, 2), round(mass_error_kg, 2), round(mass_error_pct, 2) 
                 ])
             
-            print(f"Mission outcome for Run {run_id} saved to montecarlo_summary.csv")
+            print(f"Mission outcome for Run {run_id} saved to montecarlo_summary.csv")      
         
         
-        # ROS Shutdown
-        node.destroy_node()
-        if rclpy.ok():
-            rclpy.shutdown()
-        
+        # Plot generation
         if ENABLE_PLOTS:
             # Plot 1
             if len(t_tel) > 0:
@@ -370,7 +595,7 @@ def main(args=None):
                 axs1[0,0].set_title('Linear Position [m]')
                 axs1[0,0].plot(t_tel, px, 'r-', label='X')
                 axs1[0,0].plot(t_tel, py, 'g-', label='Y')
-                axs1[0,0].plot(t_tel, pz, 'b-', label='Z')
+                axs1[0,0].plot(t_tel, pz_rel, 'b-', label='Z')
                 axs1[0,0].set_ylabel('Meters')
                 axs1[0,0].grid(True); axs1[0,0].legend()
                 

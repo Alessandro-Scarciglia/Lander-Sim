@@ -3,7 +3,7 @@ import subprocess
 import time
 
 # Parameters configuration
-NUM_RUNS = 100                 
+NUM_RUNS = 300              
 LAUNCH_FILE = 'headless_launch.py'
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -31,7 +31,8 @@ def main():
         print(f"\n[RUN {run_id}/{NUM_RUNS}] Starting simulation cycle...")
         
         try:
-            os.environ['MC_RUN_ID'] = str(run_id)            
+            os.environ['MC_RUN_ID'] = str(run_id)
+            os.environ['SIMULATION_RUN_ID'] = str(run_id)            
             print(f"[RUN {run_id}] Background execution (Generation + GzServer)...")
             run_start_time = time.time()            
             subprocess.run(LAUNCH_COMMAND, check=True)            

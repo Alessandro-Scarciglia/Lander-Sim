@@ -30,7 +30,7 @@ class PSIDisturbance(Node):
 
         # Mesh loading
         MESH_DIR = os.path.join(WS_ROOT, "src", "worlds", "models", "terrain_model", "meshes")
-        MESH_PATH = os.path.join(MESH_DIR, "moon_0.stl")
+        MESH_PATH = os.path.join(MESH_DIR, "terrain_cropped.stl")
         
         self.get_logger().info(f"Loading terrain mesh from: {MESH_PATH}...")
         try:
@@ -52,14 +52,22 @@ class PSIDisturbance(Node):
         
         # Subscription
         self.sub_tel = self.create_subscription(ModelStates, '/gazebo/model_states', self.telemetry_callback, 10)
-        self.sub_cutoff = self.create_subscription(Float64, '/lander/thrusters/left', self.thruster_cb, 10)
+        self.sub_cutoff_left = self.create_subscription(Float64, '/lander/thrusters/left', lambda msg: self.thruster_cb(msg, 'left'), 10)
+        self.sub_cutoff_central = self.create_subscription(Float64, '/lander/thrusters/central', lambda msg: self.thruster_cb(msg, 'central'), 10)
         self.sub_stop = self.create_subscription(Bool, '/lander/stop_logging', self.stop_cb, 10)
-        
+
+        self.thruster_states = {
+            'left': 0.0,
+            'central': 0.0 
+        }
+
+        self.thrust_detected = False
         self.start_time = None        
         self.node_start_time = None
         self.relative_cutoff_time = None
         self.omega = 3.0   
-        self.main_engine_off = False      
+        self.main_engine_off = False  
+        self.is_recording = True    
 
         self.time_data = []
         self.n_data = []
@@ -83,16 +91,25 @@ class PSIDisturbance(Node):
         return 0.0
     
     def stop_cb(self, msg):
-        if msg.data == True:
-            self.get_logger().info("Automatic stop signal received! Generating disturbance plots...")
-            os.kill(os.getpid(), signal.SIGINT)
+        if msg.data and self.is_recording:
+            self.get_logger().info("Automatic stop signal received! Freezing data collection...")
+            self.is_recording = False
     
-    def thruster_cb(self, msg):
-        if msg.data <= 0.0 and not self.main_engine_off:
-            self.main_engine_off = True
+    def thruster_cb(self, msg, thruster_name):
+        if not self.is_recording:
+            return        
+        self.thruster_states[thruster_name] = msg.data        
+        total_thrust = sum(self.thruster_states.values())        
+        
+        if total_thrust > 0.0:
+            self.thrust_detected = True            
+        
+        if self.thrust_detected and total_thrust <= 0.0 and not self.main_engine_off:
+            self.main_engine_off = True            
             now = self.get_clock().now().nanoseconds / 1e9
             if self.node_start_time is not None:
-                self.relative_cutoff_time = now - self.node_start_time
+                self.relative_cutoff_time = now - self.node_start_time                
+            
 
     def calculate_quadratic_disturbance(self, h):        
         if h >= 10.0:
@@ -108,7 +125,9 @@ class PSIDisturbance(Node):
         # Safety saturation
         return max(0.0, min(force, 500.0))
 
-    def telemetry_callback(self, msg):       
+    def telemetry_callback(self, msg):  
+        if not self.is_recording:
+            return     
         now = self.get_clock().now()        
         
         if now.nanoseconds == 0:
@@ -204,28 +223,30 @@ def main(args=None):
     node = PSIDisturbance()
     try:
         rclpy.spin(node)
-    except KeyboardInterrupt:
-        print("\n[PSIDisturbance Logger] Starting pre-shutdown chart generation...")
+    except (KeyboardInterrupt, SystemExit):
+        pass
     finally:
-        signal.signal(signal.SIGINT, signal.SIG_IGN)
+        node.destroy_node()
+        if rclpy.ok():
+            rclpy.shutdown()
+        
         ENABLE_PLOTS = os.environ.get('MC_ENABLE_PLOTS', 'True').lower() == 'true'
+        signal.signal(signal.SIGINT, signal.SIG_IGN)
         
         t_data = list(node.time_data)
         n_data = list(node.n_data)
         e_data = list(node.e_data)
         s_data = list(node.s_data)
         w_data = list(node.w_data)
-        cutoff_line = node.relative_cutoff_time
+        cutoff_line = node.relative_cutoff_time        
         
-        node.destroy_node()
-        if rclpy.ok():
-            rclpy.shutdown()
 
         if len(t_data) == 0:
             print("WARNING: No data collected. Skipping plot generation.")
             return
 
         if ENABLE_PLOTS:
+            print("\n[PSIDisturbance Logger] Starting chart generation...")
             # Plot
             fig, axs = plt.subplots(4, 1, figsize=(12, 10), sharex=True)
             fig.suptitle('Disturbance Forces', fontsize=16, fontweight='bold')
@@ -255,8 +276,8 @@ def main(args=None):
             save_path = os.path.join(node.plots_dir, '04_disturbance_profile.png')
             fig.savefig(save_path, dpi=300)
 
-            print(f"\nPlot saved:")
-            print(save_path)
+            print(f"Plot saved: {save_path}")
+            
 
 
 if __name__ == '__main__':

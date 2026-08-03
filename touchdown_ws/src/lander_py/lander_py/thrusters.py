@@ -40,11 +40,12 @@ class Thrusters(Node):
         
         mass_body = self.read_mass_from_sdf(self.body_sdf_path)
         mass_passenger = self.read_mass_from_sdf(self.passenger_sdf_path)
-        mass_legs = 200.0;
+        leg_cfg = config["leg_generation"]
         thruster_cfg = config["thrusters"]
+        mass_legs = 4 * self.calculate_leg_mass(leg_cfg)
 
         # Total mass
-        total_mass = mass_body + mass_passenger + mass_legs
+        total_mass = mass_body + mass_passenger +  mass_legs
 
         g = thruster_cfg["lunar_gravity"]                      # Lunar gravity [m/s^2]
         self.num_engines = thruster_cfg["num_engines"]         # Number of main engines
@@ -74,6 +75,7 @@ class Thrusters(Node):
         self.get_logger().info("--- THRUST CONTROLLER INITIALIZATION ---")
         self.get_logger().info(f"Body Mass (Dry Body+Fuel): {mass_body:.2f} kg")
         self.get_logger().info(f"Passenger Mass (Payload)  : {mass_passenger:.2f} kg")
+        self.get_logger().info(f"Legs Mass (Calculated): {mass_legs:.2f} kg")
         self.get_logger().info(f"Total Flight Mass         : {total_mass:.2f} kg")
         self.get_logger().info(f"Gravity: {g} m/s^2")
         self.get_logger().info(f"Total Required Thrust T0: {T0:.2f} N")
@@ -92,6 +94,22 @@ class Thrusters(Node):
         self.timer = self.create_timer(0.02, self.control_loop)
         
         self.get_logger().info("Main engines started! Waiting for Gazebo...")
+    
+    def calculate_leg_mass(self, leg_cfg):        
+        # 4 Trusses (C1D, C2D, A1D, A2D)
+        mass = 4 * leg_cfg.get("truss_mass", 0.0) 
+
+        # DF System
+        mass += leg_cfg.get("strut_DF_mass", 0.0)
+        mass += leg_cfg.get("piston_DF_mass", 0.0)
+        
+        # B Systems (B1 e B2)
+        mass += 2 * (leg_cfg.get("b_strut_mass", 0.0) + leg_cfg.get("b_piston_mass", 0.0))
+        
+        # link_D, link_E, link_foot
+        mass += 10.0 + 10.0 + 5.0 
+        
+        return mass
 
     
     def read_mass_from_sdf(self, filepath):        

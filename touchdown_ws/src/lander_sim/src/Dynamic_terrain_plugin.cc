@@ -92,14 +92,14 @@ namespace gazebo
             }
 
             // Debug
-            static int debug_counter = 0;
-            if (debug_counter % 500 == 0) 
-            {
-              RCLCPP_INFO(this->ros_node_->get_logger(), 
-                "[DEBUG Terreno] Profondita: %.4f m | Alpha: %.2f | KP: %.1f | KD: %.1f | MU: %.2f", 
-                depth, alpha, current_kp, current_kd, current_mu);
-            }
-            debug_counter++;            
+            // static int debug_counter = 0;
+            // if (debug_counter % 500 == 0) 
+            // {
+            //  RCLCPP_INFO(this->ros_node_->get_logger(), 
+            //    "[DEBUG Terreno] Profondita: %.4f m | Alpha: %.2f | KP: %.1f | KD: %.1f | MU: %.2f", 
+            //    depth, alpha, current_kp, current_kd, current_mu);
+            //}
+            // debug_counter++;            
           }
       }
     }

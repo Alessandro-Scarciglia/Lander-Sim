@@ -9,18 +9,18 @@
 
       <!-- ================= INERTIAL ================= -->
       <inertial>
-        <mass>2821.79809</mass>
+        <mass>2646.60362</mass>
 
         <!-- CoG -->
-        <pose>0.01102 0.07481 1.31207 0 0 0</pose>
+        <pose>-0.01786 0.03778 0.91763 0 0 0</pose>
 
         <inertia>
-          <ixx>5979.25752</ixx>
-          <iyy>5882.18754</iyy>
-          <izz>5044.44808</izz>
-          <ixy>-198.73443</ixy>
-          <ixz>50.47560</ixz>
-          <iyz>-145.15130</iyz>
+          <ixx>5025.90752</ixx>
+          <iyy>4955.87051</iyy>
+          <izz>4387.02791</izz>
+          <ixy>-328.38622</ixy>
+          <ixz>11.21317</ixz>
+          <iyz>-322.93940</iyz>
         </inertia>
       </inertial>
 
@@ -187,12 +187,7 @@
       <direction>0 0 1</direction>
     </plugin>
 
-    <!-- ================= MASS UPDATER ================= -->
-    <!--
-    <plugin name="mass_updater_plugin" filename="libgazebo_ros_mass_updater.so">
-      <link_name>body_link</link_name>
-    </plugin>
-    -->
-
+    
   </model>
 </sdf>
+<!-- METADATA_DRY_MASS: 1818.00000 -->

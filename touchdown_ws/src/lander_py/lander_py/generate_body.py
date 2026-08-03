@@ -4,6 +4,10 @@ import os
 import re
 import yaml
 
+run_id = os.environ.get('SIMULATION_RUN_ID')
+if run_id is not None:
+    random.seed(int(run_id))
+
 # Definition of the SDF file path
 # Find the absolute path where this script is located
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -290,6 +294,8 @@ def generate_simulation_files():
     new_sdf = new_sdf.replace("{IXY}", f"{I_body_totale[0,1]:.5f}")
     new_sdf = new_sdf.replace("{IXZ}", f"{I_body_totale[0,2]:.5f}")
     new_sdf = new_sdf.replace("{IYZ}", f"{I_body_totale[1,2]:.5f}")
+
+    new_sdf += f"\n<!-- METADATA_DRY_MASS: {M_dry:.5f} -->\n"
     
     try:
         with open(OUTPUT_FILE, "w") as file:
@@ -317,6 +323,7 @@ def generate_simulation_files():
     new_passenger_sdf = new_passenger_sdf.replace("{PASS_IXY}", f"{I_PASS[0,1]:.5f}")
     new_passenger_sdf = new_passenger_sdf.replace("{PASS_IXZ}", f"{I_PASS[0,2]:.5f}")
     new_passenger_sdf = new_passenger_sdf.replace("{PASS_IYZ}", f"{I_PASS[1,2]:.5f}")
+    
 
     with open(PASSENGER_OUTPUT_FILE, "w") as file:
         file.write(new_passenger_sdf)

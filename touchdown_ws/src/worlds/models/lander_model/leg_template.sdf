@@ -89,7 +89,7 @@
         <pose>0 0 0 0 0 0</pose>
         <geometry><cylinder><radius>0.25</radius><length>0.05</length></cylinder></geometry>
         <surface>
-          <contact><ode><kp>5000000.0</kp><kd>50000</kd><max_vel>0.0</max_vel><min_depth>0.0</min_depth></ode></contact>
+          <contact><ode><kp>500000.0</kp><kd>20000.0</kd><max_vel>0.0</max_vel><min_depth>0.0</min_depth></ode></contact>
           <friction><ode><mu>1.0</mu><mu2>1.0</mu2></ode></friction>
         </surface>
         <max_contacts>20</max_contacts>
