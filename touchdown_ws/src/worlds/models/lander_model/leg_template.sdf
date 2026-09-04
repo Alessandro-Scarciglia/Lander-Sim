@@ -58,13 +58,13 @@
 
     <link name="link_D">
       <pose>{POSE_D}</pose>
-      <inertial><mass>10.0</mass><inertia><ixx>0.01</ixx><iyy>0.01</iyy><izz>0.01</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>
+      <inertial><mass>{MASS_D}</mass><inertia><ixx>{IXX_D}</ixx><iyy>{IYY_D}</iyy><izz>{IZZ_D}</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>
       <visual name="vis"><geometry><sphere><radius>0.1</radius></sphere></geometry></visual>
     </link>
 
     <link name="link_E">
       <pose>{POSE_E}</pose>
-      <inertial><mass>10.0</mass><inertia><ixx>0.01</ixx><iyy>0.01</iyy><izz>0.01</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>
+      <inertial><mass>{MASS_E}</mass><inertia><ixx>{IXX_E}</ixx><iyy>{IYY_E}</iyy><izz>{IZZ_E}</izz><ixy>0</ixy><ixz>0</ixz><iyz>0</iyz></inertia></inertial>
       <visual name="vis_E"><geometry><sphere><radius>0.1</radius></sphere></geometry></visual>
     </link>
 
@@ -84,7 +84,7 @@
 
     <link name="link_foot">
       <pose relative_to="link_DF_piston">0 0 {Z_FOOT_POS} 0 {PITCH_FOOT} 0</pose>
-      <inertial><mass>5.0</mass><inertia><ixx>0.05</ixx><iyy>0.05</iyy><izz>0.05</izz><ixy>0.0</ixy><ixz>0.0</ixz><iyz>0.0</iyz></inertia></inertial>
+      <inertial><mass>{MASS_FOOT}</mass><inertia><ixx>{IXX_FOOT}</ixx><iyy>{IYY_FOOT}</iyy><izz>{IZZ_FOOT}</izz><ixy>0.0</ixy><ixz>0.0</ixz><iyz>0.0</iyz></inertia></inertial>
       <collision name="foot_collision">
         <pose>0 0 0 0 0 0</pose>
         <geometry><cylinder><radius>0.25</radius><length>0.05</length></cylinder></geometry>

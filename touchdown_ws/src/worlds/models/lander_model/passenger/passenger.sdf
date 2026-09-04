@@ -5,13 +5,13 @@
       
       <!-- INERZIA, MASSA, COG -->
       <inertial>
-        <mass>1275.00000</mass>
+        <mass>1725.00000</mass>
         <!-- CoG locale rispetto a RF2 -->
-        <pose>-0.05000 -0.05000 0.00000 0 0 0</pose> 
+        <pose>0.05000 0.05000 1.00000 0 0 0</pose> 
         <inertia>
-          <ixx>1380.00000</ixx>
-          <iyy>1380.00000</iyy>
-          <izz>2550.00000</izz>
+          <ixx>3500.00000</ixx>
+          <iyy>3500.00000</iyy>
+          <izz>5500.00000</izz>
           <ixy>0.00000</ixy>
           <ixz>0.00000</ixz>
           <iyz>0.00000</iyz>
@@ -63,3 +63,6 @@
     </link>
   </model>
 </sdf>
+<!-- METADATA_PASSENGER_MASS: 1725.00000000 -->
+<!-- METADATA_PASSENGER_COG: 0.05000000;0.05000000;1.00000000 -->
+<!-- METADATA_PASSENGER_INERTIA: 3500.00000000;0.00000000;0.00000000;0.00000000;3500.00000000;0.00000000;0.00000000;0.00000000;5500.00000000 -->

@@ -296,6 +296,25 @@ def generate_simulation_files():
     new_sdf = new_sdf.replace("{IYZ}", f"{I_body_totale[1,2]:.5f}")
 
     new_sdf += f"\n<!-- METADATA_DRY_MASS: {M_dry:.5f} -->\n"
+    new_sdf += f"\n<!-- METADATA_WET_MASS: {M_body_link:.5f} -->\n"
+    new_sdf += (
+    f"<!-- METADATA_BODY_COG: "
+    f"{cog_body[0]:.8f};"
+    f"{cog_body[1]:.8f};"
+    f"{cog_body[2]:.8f} -->\n"
+    )
+    new_sdf += (
+        f"<!-- METADATA_BODY_INERTIA: "
+        f"{I_body_totale[0,0]:.8f};"
+        f"{I_body_totale[0,1]:.8f};"
+        f"{I_body_totale[0,2]:.8f};"
+        f"{I_body_totale[1,0]:.8f};"
+        f"{I_body_totale[1,1]:.8f};"
+        f"{I_body_totale[1,2]:.8f};"
+        f"{I_body_totale[2,0]:.8f};"
+        f"{I_body_totale[2,1]:.8f};"
+        f"{I_body_totale[2,2]:.8f} -->\n"
+    )
     
     try:
         with open(OUTPUT_FILE, "w") as file:
@@ -323,7 +342,30 @@ def generate_simulation_files():
     new_passenger_sdf = new_passenger_sdf.replace("{PASS_IXY}", f"{I_PASS[0,1]:.5f}")
     new_passenger_sdf = new_passenger_sdf.replace("{PASS_IXZ}", f"{I_PASS[0,2]:.5f}")
     new_passenger_sdf = new_passenger_sdf.replace("{PASS_IYZ}", f"{I_PASS[1,2]:.5f}")
-    
+    new_passenger_sdf += (
+    f"\n<!-- METADATA_PASSENGER_MASS: {M_PASSENGER:.8f} -->\n"
+    )
+
+    new_passenger_sdf += (
+        f"<!-- METADATA_PASSENGER_COG: "
+        f"{COG_PASS[0]:.8f};"
+        f"{COG_PASS[1]:.8f};"
+        f"{COG_PASS[2]:.8f} -->\n"
+    )
+
+    new_passenger_sdf += (
+        f"<!-- METADATA_PASSENGER_INERTIA: "
+        f"{I_PASS[0,0]:.8f};"
+        f"{I_PASS[0,1]:.8f};"
+        f"{I_PASS[0,2]:.8f};"
+        f"{I_PASS[1,0]:.8f};"
+        f"{I_PASS[1,1]:.8f};"
+        f"{I_PASS[1,2]:.8f};"
+        f"{I_PASS[2,0]:.8f};"
+        f"{I_PASS[2,1]:.8f};"
+        f"{I_PASS[2,2]:.8f} -->\n"
+    )
+        
 
     with open(PASSENGER_OUTPUT_FILE, "w") as file:
         file.write(new_passenger_sdf)

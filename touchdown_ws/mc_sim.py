@@ -3,7 +3,7 @@ import subprocess
 import time
 
 # Parameters configuration
-NUM_RUNS = 300              
+NUM_RUNS = 100             
 LAUNCH_FILE = 'headless_launch.py'
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))

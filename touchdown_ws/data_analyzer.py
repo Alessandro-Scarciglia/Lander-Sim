@@ -7,7 +7,6 @@ from sklearn.svm import SVC
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score, classification_report
 import numpy as np
-from sklearn.tree import DecisionTreeClassifier, export_text, plot_tree
 
 
 

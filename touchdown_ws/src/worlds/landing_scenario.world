@@ -62,7 +62,7 @@
               <threshold>1</threshold>
             </bounce>
           </surface>
-          <max_contacts>40</max_contacts>
+          <max_contacts>20</max_contacts>
         </collision>
       </link>
     </model>
@@ -124,11 +124,11 @@
     <!-- ======================== -->
     <include>
       <uri>model://lander_model</uri>
-      <pose>9.76958 -15.52901 -151.23865 -0.08701 -0.02680 0.05640</pose> <!-- z=30 per partire sopra il
+      <pose>59.00000 68.60000 -149.81611 0.11826 -0.08914 -0.04320</pose> <!-- z=30 per partire sopra il
       terreno -->
       <plugin name="initial_velocity_plugin" filename="libInitialVelocityPlugin.so">
-        <linear_velocity>0.03193 -0.13532 -0.47170</linear_velocity>
-        <angular_velocity>-0.02636 -0.07229 -0.02537</angular_velocity>
+        <linear_velocity>-0.18960 0.37701 -0.37571</linear_velocity>
+        <angular_velocity>-0.01587 0.03299 0.02074</angular_velocity>
       </plugin>
     </include>
 
