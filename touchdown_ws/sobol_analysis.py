@@ -65,8 +65,8 @@ def update_config_for_run(base_config, param_dict):
     config['body_generation']['landing_mass_range'] = [valid_landing_mass, valid_landing_mass]
     
     # Fixed parameters
-    config['landing_scenario']['pos_x_range'] = [59.00, 59.00]
-    config['landing_scenario']['pos_y_range'] = [68.60, 68.60]          
+    config['landing_scenario']['pos_x_range'] = [66.00, 66.00]
+    config['landing_scenario']['pos_y_range'] = [-26.00, -26.00]       
     config['leg_generation']['df_k'] = [100000.0, 100000.0]
     config['leg_generation']['df_c'] = [28000.0, 28000.0]
     config['leg_generation']['df_crush_force_stage2'] = [15000.0, 15000.0]

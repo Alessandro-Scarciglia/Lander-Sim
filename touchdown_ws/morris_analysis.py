@@ -49,8 +49,8 @@ def update_config_for_run(base_config, param_dict):
     config = copy.deepcopy(base_config)
     
     # Positions, Attitude, Linear and Angular Velocities
-    config['landing_scenario']['pos_x_range'] = [59.00, 59.00]
-    config['landing_scenario']['pos_y_range'] = [68.60, 68.60]
+    config['landing_scenario']['pos_x_range'] = [66.00, 66.00]
+    config['landing_scenario']['pos_y_range'] = [-26.00, -26.00]
     
     config['landing_scenario']['altitude_range'] = [float(param_dict['altitude'])] * 2
     config['landing_scenario']['roll_range_deg'] = [float(param_dict['roll'])] * 2

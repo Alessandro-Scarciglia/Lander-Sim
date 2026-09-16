@@ -51,8 +51,8 @@ body_generation:
 # Landing scenario parameters (generate_scenario.py)
 
 landing_scenario:
-  pos_x_range: [59.00, 59.00]
-  pos_y_range: [68.60, 68.60]
+  pos_x_range: [66.00, 66.00]
+  pos_y_range: [-26.00, -26.00]
   altitude_range: [0.3, 1.2]
   roll_range_deg: [-8.0, 8.0]  
   pitch_range_deg: [-8.0, 8.0]

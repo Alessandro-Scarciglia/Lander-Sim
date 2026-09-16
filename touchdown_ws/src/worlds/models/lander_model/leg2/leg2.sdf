@@ -132,12 +132,12 @@
       <axis>
         <xyz>0 1 0</xyz>
         <limit><lower>-0.52</lower><upper>0.52</upper></limit>
-        <dynamics><spring_reference>0.0</spring_reference><spring_stiffness>200.0</spring_stiffness><damping>20.0</damping></dynamics>
+        <dynamics><spring_reference>0.0</spring_reference><spring_stiffness>209.6</spring_stiffness><damping>19.7</damping></dynamics>
       </axis>
       <axis2>
         <xyz>1 0 0</xyz>
         <limit><lower>-0.52</lower><upper>0.52</upper></limit>
-        <dynamics><spring_reference>0.0</spring_reference><spring_stiffness>200.0</spring_stiffness><damping>20.0</damping></dynamics>
+        <dynamics><spring_reference>0.0</spring_reference><spring_stiffness>209.6</spring_stiffness><damping>19.7</damping></dynamics>
       </axis2>
     </joint>
 
@@ -174,14 +174,14 @@
       <topic_name>leg2/df_force_displacement</topic_name>
       <joint_name>shock_absorber_DF</joint_name>
       <dual_stage>true</dual_stage>
-      <stiffness>100000.0</stiffness>
-      <damping>28000.0</damping>
-      <crush_force_stage_1>2693.9</crush_force_stage_1>
+      <stiffness>153916.5</stiffness>
+      <damping>26510.4</damping>
+      <crush_force_stage_1>2455.2</crush_force_stage_1>
       <stroke_limit_stage_1>0.400</stroke_limit_stage_1>
-      <crush_force_stage_2>15000.0</crush_force_stage_2>
+      <crush_force_stage_2>16455.9</crush_force_stage_2>
       <total_stroke_limit>0.900</total_stroke_limit>
-      <rebound_damping>15000.0</rebound_damping>
-      <bottomout_stiffness>10000000.0</bottomout_stiffness>
+      <rebound_damping>17789.9</rebound_damping>
+      <bottomout_stiffness>9877250.7</bottomout_stiffness>
       <compression_dir>1.0</compression_dir>
     </plugin>
 
@@ -189,10 +189,10 @@
       <ros><namespace>/lander</namespace></ros>
       <topic_name>leg2/b1_force_displacement</topic_name>
       <joint_name>joint_B1_prismatic</joint_name>
-      <crush_force>6000.0</crush_force>
-      <stiffness>100000.0</stiffness>
-      <damping>28000.0</damping>
-      <rebound_damping>15000.0</rebound_damping>
+      <crush_force>6537.5</crush_force>
+      <stiffness>52535.8</stiffness>
+      <damping>26700.9</damping>
+      <rebound_damping>12733.6</rebound_damping>
       <compression_dir>1.0</compression_dir>
       <bidirectional>true</bidirectional>
       <dual_stage>false</dual_stage>
@@ -202,10 +202,10 @@
       <ros><namespace>/lander</namespace></ros>
       <topic_name>leg2/b2_force_displacement</topic_name>
       <joint_name>joint_B2_prismatic</joint_name>
-      <crush_force>6000.0</crush_force>
-      <rebound_damping>15000.0</rebound_damping>
-      <stiffness>100000.0</stiffness>
-      <damping>28000.0</damping>
+      <crush_force>6537.5</crush_force>
+      <rebound_damping>12733.6</rebound_damping>
+      <stiffness>52535.8</stiffness>
+      <damping>26700.9</damping>
       <compression_dir>1.0</compression_dir>
       <bidirectional>true</bidirectional>
       <dual_stage>false</dual_stage>

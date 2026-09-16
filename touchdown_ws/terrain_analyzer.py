@@ -66,7 +66,7 @@ def analyze_terrain(mesh_path, lander_radius=2.5, num_challenging_spots=5, min_d
     
     
     # Spots searching
-    chal_min, chal_max = 8.0, 15.0
+    chal_min, chal_max = 8.0, 20.0
     chal_mask = (avg_slope_deg >= chal_min) & (avg_slope_deg <= chal_max) & valid_area
     
     if not np.any(chal_mask):

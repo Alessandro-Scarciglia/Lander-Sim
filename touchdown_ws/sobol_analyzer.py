@@ -6,17 +6,16 @@ from SALib.analyze import sobol
 
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-CSV_PATH = os.path.join(CURRENT_DIR, 'plots', 'montecarlo_summary_sobol2.csv')
+CSV_PATH = os.path.join(CURRENT_DIR, 'plots', 'montecarlo_summary_sobol15.csv')
 SOBOL_DIR = os.path.join(CURRENT_DIR, 'plots', 'sobol2')
 os.makedirs(SOBOL_DIR, exist_ok=True)
 
 problem = {
-    'num_vars': 14, 
+    'num_vars': 13, 
     'names': [
         'altitude', 'roll', 'pitch', 'yaw',
         'vel_x', 'vel_y', 'vel_z', 
-        'ang_x', 'ang_y', 'ang_z', 
-        'dry_scenario_idx',
+        'ang_x', 'ang_y', 'ang_z',         
         'pass_scenario_idx',
         'propellant_mass',
         'df_crush_force_stage1'
@@ -24,8 +23,7 @@ problem = {
     'bounds': [
         [0.3, 1.2], [-8.0, 8.0], [-8.0, 8.0], [-8.0, 8.0], 
         [-0.8, 0.8], [-0.8, 0.8], [-2.0, -0.3],
-        [-0.1, 0.1], [-0.1, 0.1], [-0.1, 0.1], 
-        [0.0, 2.99],          
+        [-0.1, 0.1], [-0.1, 0.1], [-0.1, 0.1],               
         [0.0, 2.99],
         [50.0, 1200.0],
         [2400.0, 6400.0]
