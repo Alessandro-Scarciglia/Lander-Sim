@@ -1,8 +1,8 @@
 FROM ros:humble-ros-base
 
 ENV DEBIAN_FRONTEND=noninteractive
-ENV ROS_WS=/root/touchdown_ws
-ENV CAD_DIR=/root/CAD
+ENV ROS_WS=/workspace/touchdown_ws
+ENV CAD_DIR=/workspace/CAD
 
 # Aggiornamenti e pacchetti base
 RUN apt-get update && apt-get upgrade -y
@@ -15,7 +15,11 @@ RUN apt-get install -y \
     wget \
     build-essential \
     python3-pip \
+    python3-matplotlib \
+    python3-yaml \
     && rm -rf /var/lib/apt/lists/*
+
+RUN python3 -m pip install --no-cache-dir "trimesh<4" "shapely<2" rtree
 
 # Copia del workspace
 COPY touchdown_ws ${ROS_WS}

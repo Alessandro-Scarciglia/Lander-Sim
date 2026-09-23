@@ -3,6 +3,7 @@ import random
 import os
 import re
 import yaml
+from lander_py.paths import simulation_config_path, workspace_root
 
 run_id = os.environ.get('SIMULATION_RUN_ID')
 if run_id is not None:
@@ -10,15 +11,7 @@ if run_id is not None:
 
 # Definition of the SDF file path
 # Find the absolute path where this script is located
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-
-# Determine the workspace root based on where the code is running
-if "install" in CURRENT_DIR:
-    # If the file runs from install/lander_py/
-    WS_ROOT = CURRENT_DIR.split("install")[0]
-else:
-    # If the file runs from src/lander_py/
-    WS_ROOT = CURRENT_DIR.split("src")[0]
+WS_ROOT = str(workspace_root())
 
 BASE_DIR = os.path.join(WS_ROOT, "src", "worlds", "models", "lander_model", "body")
 TEMPLATE_FILE = os.path.join(BASE_DIR, "body_template.sdf")
@@ -28,13 +21,13 @@ PASSENGER_DIR = os.path.join(WS_ROOT, "src", "worlds", "models", "lander_model",
 PASSENGER_TEMPLATE_FILE = os.path.join(PASSENGER_DIR, "passenger_template.sdf")
 PASSENGER_OUTPUT_FILE = os.path.join(PASSENGER_DIR, "passenger.sdf")
 
-CONFIG_PATH = os.path.join(WS_ROOT, "config.yaml")
+CONFIG_PATH = str(simulation_config_path())
 try:
     with open(CONFIG_PATH, 'r') as file:
         config = yaml.safe_load(file)
-    print("Config.yaml file successfully loaded!")
+    print("Simulation config successfully loaded!")
 except FileNotFoundError:
-    print(f"Error: Unable to find the config.yaml file at the path: {CONFIG_PATH}")
+    print(f"Error: Unable to find the simulation config at the path: {CONFIG_PATH}")
     exit(1)
 
 # Body parameters:
@@ -133,7 +126,7 @@ def calculate_tank_properties(mass_target, current_rho , current_Lcyl, epsilon, 
         for i, zi in enumerate(z):
             r = radius_at_z(zi)
             area[i] = np.pi * r**2
-        return np.trapezoid(area, z)
+        return np.trapz(area, z)
     
     
     max_iter = 100

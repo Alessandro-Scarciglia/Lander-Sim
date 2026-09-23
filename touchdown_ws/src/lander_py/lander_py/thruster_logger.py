@@ -5,6 +5,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import os
+from lander_py.paths import workspace_root
 import signal
 
 
@@ -17,13 +18,9 @@ class ThrustLogger(Node):
         from rclpy.parameter import Parameter
         self.set_parameters([Parameter('use_sim_time', Parameter.Type.BOOL, True)])
 
-        SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))        
-        if "install" in SCRIPT_DIR:
-            WS_ROOT = SCRIPT_DIR.split("install")[0]            
-        else:
-            WS_ROOT = SCRIPT_DIR.split("src")[0]
+        WS_ROOT = str(workspace_root())
             
-        self.plots_dir = os.path.join(WS_ROOT, "plots")
+        self.plots_dir = os.path.join(WS_ROOT, "figures", "simulation")
         os.makedirs(self.plots_dir, exist_ok=True)
 
         # Thruster Subscribers

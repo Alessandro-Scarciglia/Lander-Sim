@@ -8,10 +8,10 @@ services:
     environment:
       - DISPLAY=$DISPLAY
       - QT_X11_NO_MITSHM=1
-      - GAZEBO_MODEL_PATH=/root/touchdown_ws/src/worlds/models
+      - GAZEBO_MODEL_PATH=/workspace/touchdown_ws/src/worlds/models
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix  # GUI forwarding
-      - ./touchdown_ws:/root/touchdown_ws
-      - ./CAD:/root/CAD               # Montaggio della cartella CAD
+      - ./touchdown_ws:/workspace/touchdown_ws
+      - ./CAD:/workspace/CAD               # Optional local CAD input directory
     privileged: true
     tty: true

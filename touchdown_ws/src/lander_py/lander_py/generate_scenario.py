@@ -4,31 +4,28 @@ import math
 import numpy as np
 import trimesh
 import yaml
+from lander_py.paths import simulation_config_path, workspace_root
 
 run_id = os.environ.get('SIMULATION_RUN_ID')
 if run_id is not None:
     random.seed(int(run_id))
 
 # Path definition
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-if "install" in CURRENT_DIR:
-    WS_ROOT = CURRENT_DIR.split("install")[0]
-else:
-    WS_ROOT = CURRENT_DIR.split("src")[0]
+WS_ROOT = str(workspace_root())
 
 MESH_DIR = os.path.join(WS_ROOT, "src", "worlds", "models", "terrain_model", "meshes")
 MESH_PATH = os.path.join(MESH_DIR, "terrain_col_light.stl")
 WORLD_DIR = os.path.join(WS_ROOT, "src", "worlds")
 TEMPLATE_FILE = os.path.join(WORLD_DIR, "landing_scenario_template.world")
 OUTPUT_WORLD = os.path.join(WORLD_DIR, "landing_scenario.world")
-CONFIG_PATH = os.path.join(WS_ROOT, "config.yaml")
+CONFIG_PATH = str(simulation_config_path())
 
 try:
     with open(CONFIG_PATH, 'r') as file:
         config = yaml.safe_load(file)
-    print("Config.yaml file successfully loaded!")
+    print("Simulation config successfully loaded!")
 except FileNotFoundError:
-    print(f"Error: Unable to find the config.yaml file at the path: {CONFIG_PATH}")
+    print(f"Error: Unable to find the simulation config at the path: {CONFIG_PATH}")
     exit(1)
 
 scenario_cfg = config["landing_scenario"]

@@ -124,11 +124,11 @@
     <!-- ======================== -->
     <include>
       <uri>model://lander_model</uri>
-      <pose>5.29021 10.87469 -150.35198 -0.11132 0.01395 -0.08178</pose> <!-- z=30 per partire sopra il
+      <pose>-30.04611 3.82191 -153.37177 -0.00709 0.04628 -0.02586</pose> <!-- z=30 per partire sopra il
       terreno -->
       <plugin name="initial_velocity_plugin" filename="libInitialVelocityPlugin.so">
-        <linear_velocity>0.25346 -0.27716 -1.87671</linear_velocity>
-        <angular_velocity>-0.01584 -0.07893 0.07787</angular_velocity>
+        <linear_velocity>-0.27531 -0.54754 -0.85567</linear_velocity>
+        <angular_velocity>0.04676 0.06861 0.01806</angular_velocity>
       </plugin>
     </include>
 

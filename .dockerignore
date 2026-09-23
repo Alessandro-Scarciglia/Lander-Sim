@@ -1,0 +1,5 @@
+touchdown_ws/build
+touchdown_ws/install
+touchdown_ws/log
+**/__pycache__
+*.pyc

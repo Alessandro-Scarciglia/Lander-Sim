@@ -15,6 +15,7 @@ import csv
 from std_msgs.msg import Float64
 import numpy as np
 import trimesh
+from lander_py.paths import simulation_config_path, workspace_root
 
 class FlightDataLogger(Node):
     def __init__(self, target_model="lander_model"):
@@ -24,22 +25,20 @@ class FlightDataLogger(Node):
 
         self.target_model = target_model  
 
-        SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))        
-        if "install" in SCRIPT_DIR:
-            self.ws_root = SCRIPT_DIR.split("install")[0]            
-        else:
-            self.ws_root = SCRIPT_DIR.split("src")[0]
+        self.ws_root = str(workspace_root())
 
-        CONFIG_PATH = os.path.join(self.ws_root, "config.yaml")
-        self.plots_dir = os.path.join(self.ws_root, "plots")
+        CONFIG_PATH = str(simulation_config_path())
+        self.plots_dir = os.path.join(self.ws_root, "figures", "simulation")
+        self.results_dir = os.path.join(self.ws_root, "data", "results")
         os.makedirs(self.plots_dir, exist_ok=True)
+        os.makedirs(self.results_dir, exist_ok=True)
 
         try:
             with open(CONFIG_PATH, 'r') as file:
                 self.config = yaml.safe_load(file)
-            self.get_logger().info("Config.yaml file successfully uploaded to the Data Logger!")
+            self.get_logger().info("Simulation config successfully loaded by the Data Logger!")
         except FileNotFoundError:
-            self.get_logger().error(f"Unable to find the config.yaml file at the path: {CONFIG_PATH}")
+            self.get_logger().error(f"Unable to find the simulation config at the path: {CONFIG_PATH}")
             # Fallback
             self.config = {"simulation_stop": {"epsilon": 0.05, "timeout_after_touchdown": 5.0, "steady_req_duration": 1.0}}      
         
@@ -709,7 +708,7 @@ def main(args=None):
             
 
             # Append to CSV file
-            csv_path = os.path.join(node.plots_dir, "montecarlo_summary.csv")
+            csv_path = os.path.join(node.results_dir, "montecarlo_summary.csv")
             file_exists = os.path.isfile(csv_path)
 
             with open(csv_path, mode='a', newline='') as f:

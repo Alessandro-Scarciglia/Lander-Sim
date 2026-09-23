@@ -1,15 +1,11 @@
 import math
 import os
 import yaml
+from lander_py.paths import simulation_config_path, workspace_root
 import random
 import numpy as np
 
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-
-if "install" in CURRENT_DIR:
-    WS_ROOT = CURRENT_DIR.split("install")[0]
-else:
-    WS_ROOT = CURRENT_DIR.split("src")[0]
+WS_ROOT = str(workspace_root())
 
 # Base directory
 MODELS_DIR = os.path.join(WS_ROOT, "src", "worlds", "models", "lander_model")
@@ -17,7 +13,7 @@ MODELS_DIR = os.path.join(WS_ROOT, "src", "worlds", "models", "lander_model")
 LEG_TEMPLATE_FILE = os.path.join(MODELS_DIR, "leg_template.sdf")
 LANDER_TEMPLATE_FILE = os.path.join(MODELS_DIR, "lander_template.sdf")
 LANDER_OUTPUT_FILE = os.path.join(MODELS_DIR, "lander.sdf")
-CONFIG_PATH = os.path.join(WS_ROOT, "config.yaml")
+CONFIG_PATH = str(simulation_config_path())
 
 def steiner_transport(Icg, mass, old_pos, new_pos):    
     d = np.array(old_pos) - np.array(new_pos)
@@ -336,14 +332,14 @@ def main():
     try:
         with open(CONFIG_PATH, 'r') as file:
             total_config = yaml.safe_load(file)
-        print("Config.yaml file successfully loaded!")
+        print("Simulation config successfully loaded!")
     except FileNotFoundError:
-        print(f"Error: Unable to find the config.yaml file at the path: {CONFIG_PATH}")
+        print(f"Error: Unable to find the simulation config at the path: {CONFIG_PATH}")
         return
         
     # Extracts the section related to the legs
     if "leg_generation" not in total_config:
-        print("Error: Section 'leg_generation' not found in config.yaml!")
+        print("Error: Section 'leg_generation' not found in the simulation config!")
         return
         
     cfg_yaml = total_config["leg_generation"]
@@ -365,7 +361,7 @@ def main():
             cfg_yaml[param] = val  
             extracted_params[param] = val
         else:
-            print(f"Warning: {param} with a [min, max] format not found in config.yaml. Check your parameters.")
+            print(f"Warning: {param} with a [min, max] format not found in the simulation config. Check your parameters.")
 
     
     print("\n--- Extracted Random Leg Parameters ---")

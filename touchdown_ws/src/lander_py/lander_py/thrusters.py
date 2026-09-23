@@ -4,6 +4,7 @@ import re
 from rclpy.node import Node
 from std_msgs.msg import Float64
 import yaml
+from lander_py.paths import simulation_config_path, workspace_root
 
 class Thrusters(Node):
     def __init__(self):
@@ -13,19 +14,10 @@ class Thrusters(Node):
 
         # Read masses from sdf files
         
-        # Absolute path of the current Python script
-        SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))        
-        
-        # Check if the node is running from the install directory created after colcon build
-        if "install" in SCRIPT_DIR:
-            # Extract workspace root path before "/install"
-            WS_ROOT = SCRIPT_DIR.split("install")[0]            
-        else:
-            # Extract workspace root path before "/src"
-            WS_ROOT = SCRIPT_DIR.split("src")[0]
+        WS_ROOT = str(workspace_root())
 
         MODEL_DIR = os.path.join(WS_ROOT, "src", "worlds", "models", "lander_model")
-        CONFIG_PATH = os.path.join(WS_ROOT, "config.yaml")
+        CONFIG_PATH = str(simulation_config_path())
             
         self.body_sdf_path = os.path.join(MODEL_DIR, "body", "body.sdf")        
         self.passenger_sdf_path = os.path.join(MODEL_DIR, "passenger", "passenger.sdf")        
@@ -33,9 +25,9 @@ class Thrusters(Node):
         try:
             with open(CONFIG_PATH, 'r') as file:
                 config = yaml.safe_load(file)
-            print("Config.yaml file successfully loaded!")
+            print("Simulation config successfully loaded!")
         except FileNotFoundError:
-            print(f"Error: Unable to find the config.yaml file at the path: {CONFIG_PATH}")
+            print(f"Error: Unable to find the simulation config at the path: {CONFIG_PATH}")
             exit(1)        
         
         mass_body = self.read_mass_from_sdf(self.body_sdf_path)
