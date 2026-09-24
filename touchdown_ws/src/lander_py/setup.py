@@ -1,3 +1,10 @@
+"""Define the Python ROS package and its executable entry points.
+
+The launch files invoke the console-script names below; each name maps to one
+generator, controller, logger, or experiment-facing node in lander_py.
+"""
+
+# Packaging imports
 from setuptools import find_packages, setup
 
 package_name = 'lander_py'
@@ -18,6 +25,7 @@ setup(
     description='TODO: Package description',
     license='TODO: License declaration',
     tests_require=['pytest'],
+# ROS executable entry points
     entry_points={
         'console_scripts': [
             'thrusters_node = lander_py.thrusters:main',

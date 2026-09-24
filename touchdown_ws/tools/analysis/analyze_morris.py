@@ -1,3 +1,6 @@
+"""Create plots and summaries from Morris sensitivity results."""
+
+# Data, numerical, plotting, and path imports
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt

@@ -1,3 +1,8 @@
+// Model a configurable landing-leg shock absorber inside Gazebo.
+// Each update computes crush, damping, rebound, and bottom-out forces, then
+// publishes the force/displacement pair used by the Python logger.
+
+// Gazebo, ROS 2, and message interfaces
 #include <gazebo/physics/Model.hh>
 #include <gazebo/physics/Joint.hh>
 #include <gazebo/physics/World.hh>

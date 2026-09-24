@@ -1,3 +1,11 @@
+"""Generate one randomized landing scenario for Gazebo.
+
+The module crops the terrain around a random landing position and fills the
+world template with the lander's pose, initial velocities, and contact
+parameters from the selected configuration.
+"""
+
+# Standard-library and scientific imports
 import random
 import os
 import math
@@ -6,6 +14,7 @@ import trimesh
 import yaml
 from lander_py.paths import simulation_config_path, workspace_root
 
+# Reproducibility and workspace paths
 run_id = os.environ.get('SIMULATION_RUN_ID')
 if run_id is not None:
     random.seed(int(run_id))
@@ -14,39 +23,56 @@ if run_id is not None:
 WS_ROOT = str(workspace_root())
 
 MESH_DIR = os.path.join(WS_ROOT, "src", "worlds", "models", "terrain_model", "meshes")
-MESH_PATH = os.path.join(MESH_DIR, "terrain_col_light.stl")
 WORLD_DIR = os.path.join(WS_ROOT, "src", "worlds")
 TEMPLATE_FILE = os.path.join(WORLD_DIR, "landing_scenario_template.world")
 OUTPUT_WORLD = os.path.join(WORLD_DIR, "landing_scenario.world")
 CONFIG_PATH = str(simulation_config_path())
 
+def as_range(value):
+    """Return a two-value interval, treating a scalar as a fixed value."""
+    if isinstance(value, (list, tuple)) and len(value) == 2:
+        return float(value[0]), float(value[1])
+    return float(value), float(value)
+
+def scenario_value(name, range_name):
+    """Read a single-run value or fall back to the Monte Carlo range key."""
+    if name in scenario_cfg:
+        return scenario_cfg[name]
+    return scenario_cfg[range_name]
+
 try:
     with open(CONFIG_PATH, 'r') as file:
         config = yaml.safe_load(file)
-    print("Simulation config successfully loaded!")
+    print(f"Simulation config loaded from: {CONFIG_PATH}")
 except FileNotFoundError:
     print(f"Error: Unable to find the simulation config at the path: {CONFIG_PATH}")
     exit(1)
 
 scenario_cfg = config["landing_scenario"]
+terrain_cfg = config.get("terrain", {})
 leg_cfg = config.get("leg_generation", {})
 
+# The simulation crop is made directly from the configured input terrain.
+configured_mesh = terrain_cfg.get("mesh_file", "terrain_col.stl")
+MESH_PATH = configured_mesh if os.path.isabs(configured_mesh) else os.path.join(MESH_DIR, configured_mesh)
+print(f"Configured terrain mesh: {configured_mesh}")
+
 # Randomization Parameters
-POS_X_RANGE = scenario_cfg["pos_x_range"]
-POS_Y_RANGE = scenario_cfg["pos_y_range"]
-ALTITUDE_RANGE = scenario_cfg["altitude_range"]  
-ROLL_RANGE = (math.radians(scenario_cfg["roll_range_deg"][0]), math.radians(scenario_cfg["roll_range_deg"][1]))
-PITCH_RANGE = (math.radians(scenario_cfg["pitch_range_deg"][0]), math.radians(scenario_cfg["pitch_range_deg"][1]))
-YAW_RANGE = (math.radians(scenario_cfg["yaw_range_deg"][0]), math.radians(scenario_cfg["yaw_range_deg"][1]))
+POS_X_RANGE = as_range(scenario_value("pos_x", "pos_x_range"))
+POS_Y_RANGE = as_range(scenario_value("pos_y", "pos_y_range"))
+ALTITUDE_RANGE = as_range(scenario_value("altitude", "altitude_range"))
+ROLL_RANGE = tuple(math.radians(value) for value in as_range(scenario_value("roll_deg", "roll_range_deg")))
+PITCH_RANGE = tuple(math.radians(value) for value in as_range(scenario_value("pitch_deg", "pitch_range_deg")))
+YAW_RANGE = tuple(math.radians(value) for value in as_range(scenario_value("yaw_deg", "yaw_range_deg")))
 
-VEL_X_RANGE = scenario_cfg["vel_x_range"]
-VEL_Y_RANGE = scenario_cfg["vel_y_range"]
-VEL_Z_RANGE = scenario_cfg["vel_z_range"]
-ANG_X_RANGE = scenario_cfg["ang_x_range"]
-ANG_Y_RANGE = scenario_cfg["ang_y_range"]
-ANG_Z_RANGE = scenario_cfg["ang_z_range"]
+VEL_X_RANGE = as_range(scenario_value("vel_x", "vel_x_range"))
+VEL_Y_RANGE = as_range(scenario_value("vel_y", "vel_y_range"))
+VEL_Z_RANGE = as_range(scenario_value("vel_z", "vel_z_range"))
+ANG_X_RANGE = tuple(math.radians(value) for value in as_range(scenario_value("ang_x_deg_s", "ang_x_range")))
+ANG_Y_RANGE = tuple(math.radians(value) for value in as_range(scenario_value("ang_y_deg_s", "ang_y_range")))
+ANG_Z_RANGE = tuple(math.radians(value) for value in as_range(scenario_value("ang_z_deg_s", "ang_z_range")))
 
-CROP_RADIUS = 25.0
+CROP_RADIUS = terrain_cfg.get("crop_radius", 25.0)
 
 # Plugin parameters
 kp_surface = scenario_cfg["kp_surface"]
@@ -84,6 +110,15 @@ z_foot_joint_local = z_legs + point_F[2]
 
 
 print(f"Loading mesh from: {MESH_PATH}...")
+if not os.path.isfile(MESH_PATH):
+    available_meshes = sorted(
+        filename for filename in os.listdir(MESH_DIR)
+        if filename.lower().endswith(".stl")
+    )
+    print(f"ERROR: Terrain mesh does not exist: {MESH_PATH}")
+    print(f"Available STL files: {', '.join(available_meshes) or 'none'}")
+    exit(1)
+
 try:
     mesh = trimesh.load(MESH_PATH)
     print("Mesh loaded successfully!\n")
@@ -191,7 +226,7 @@ def generate_kinematics():
     print(f"Position   : X={pos_x:.2f}, Y={pos_y:.2f}, Z={pos_z:.2f}")
     print(f"Attitude   : R={math.degrees(roll):.2f}°, P={math.degrees(pitch):.2f}°, Y={math.degrees(yaw):.2f}°")
     print(f"Linear Vel : Vx={vel_x:.2f}, Vy={vel_y:.2f}, Vz={vel_z:.2f}")
-    print(f"Angular Vel: Wx={ang_x:.3f}, Wy={ang_y:.3f}, Wz={ang_z:.3f}")
+    print(f"Angular Vel: Wx={math.degrees(ang_x):.3f} deg/s, Wy={math.degrees(ang_y):.3f} deg/s, Wz={math.degrees(ang_z):.3f} deg/s")
     
     try:
         with open(TEMPLATE_FILE, "r") as file:

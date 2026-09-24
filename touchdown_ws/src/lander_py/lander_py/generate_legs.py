@@ -1,3 +1,11 @@
+"""Generate the four landing-leg SDF models and the assembled lander model.
+
+The generator converts configured leg geometry and absorber parameters into
+link poses, inertias, joints, and Gazebo plugin settings before writing the
+individual leg files and their parent lander SDF.
+"""
+
+# Geometry, configuration, and numerical imports
 import math
 import os
 import yaml
@@ -5,6 +13,7 @@ from lander_py.paths import simulation_config_path, workspace_root
 import random
 import numpy as np
 
+# Workspace paths and template locations
 WS_ROOT = str(workspace_root())
 
 # Base directory
@@ -358,13 +367,17 @@ def main():
         if param in cfg_yaml and isinstance(cfg_yaml[param], list) and len(cfg_yaml[param]) == 2:
             min_val, max_val = cfg_yaml[param]
             val = random.uniform(min_val, max_val)
-            cfg_yaml[param] = val  
-            extracted_params[param] = val
+        elif param in cfg_yaml:
+            val = cfg_yaml[param]
         else:
             print(f"Warning: {param} with a [min, max] format not found in the simulation config. Check your parameters.")
+            continue
+
+        cfg_yaml[param] = val
+        extracted_params[param] = val
 
     
-    print("\n--- Extracted Random Leg Parameters ---")
+    print("\n--- Selected Leg Parameters ---")
     for key, value in extracted_params.items():
         print(f" > {key}: {value:.2f}")
     print("---------------------------------------\n")

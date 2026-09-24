@@ -1,3 +1,11 @@
+"""Generate the lander's variable-mass body and passenger SDF files.
+
+The generator reads the body configuration, computes tank geometry, mass,
+center of gravity, and inertia, then substitutes those values into the SDF
+templates consumed by Gazebo.
+"""
+
+# Numerical and file-generation imports
 import numpy as np
 import random
 import os
@@ -5,6 +13,7 @@ import re
 import yaml
 from lander_py.paths import simulation_config_path, workspace_root
 
+# Reproducibility and workspace paths
 run_id = os.environ.get('SIMULATION_RUN_ID')
 if run_id is not None:
     random.seed(int(run_id))
@@ -22,6 +31,12 @@ PASSENGER_TEMPLATE_FILE = os.path.join(PASSENGER_DIR, "passenger_template.sdf")
 PASSENGER_OUTPUT_FILE = os.path.join(PASSENGER_DIR, "passenger.sdf")
 
 CONFIG_PATH = str(simulation_config_path())
+
+def as_range(value):
+    """Return a two-value interval, treating a scalar as a fixed value."""
+    if isinstance(value, (list, tuple)) and len(value) == 2:
+        return float(value[0]), float(value[1])
+    return float(value), float(value)
 try:
     with open(CONFIG_PATH, 'r') as file:
         config = yaml.safe_load(file)
@@ -33,7 +48,8 @@ except FileNotFoundError:
 # Body parameters:
 body_cfg = config["body_generation"]
 # Landing Mass interval
-M1L, M2L = body_cfg["landing_mass_range"]   
+landing_mass_value = body_cfg.get("landing_mass", body_cfg.get("landing_mass_range"))
+M1L, M2L = as_range(landing_mass_value)
 
 # Lander dry
 DRY_SCENARIOS = body_cfg["dry_scenarios"]

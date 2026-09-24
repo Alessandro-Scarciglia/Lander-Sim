@@ -1,3 +1,11 @@
+"""Generate and execute Morris sensitivity-analysis simulations.
+
+The script samples the configured parameter space, writes each sampled
+configuration, launches a simulation for it, and stores the resulting summary
+data for the later Morris analysis scripts.
+"""
+
+# Process, configuration, and sensitivity-analysis imports
 import os
 import subprocess
 import time
@@ -5,7 +13,7 @@ import yaml
 import copy
 from SALib.sample import morris
 
-# Problem definition
+# Sensitivity problem definition
 problem = {
     'num_vars': 25, 
     'names': [        

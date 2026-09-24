@@ -1,3 +1,11 @@
+"""Control the main landing engines with a mass-aware thrust profile.
+
+At startup the node reads the generated SDF masses, computes the initial
+throttle needed for lunar gravity, and publishes synchronized engine commands
+until the programmed cutoff time.
+"""
+
+# ROS, configuration, and file-reading imports
 import rclpy
 import os
 import re

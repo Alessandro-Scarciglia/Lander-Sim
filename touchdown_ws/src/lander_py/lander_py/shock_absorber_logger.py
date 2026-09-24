@@ -1,3 +1,10 @@
+"""Record force and displacement signals from all landing-leg absorbers.
+
+The node subscribes to the C++ shock-absorber plugin topics, stops when the
+flight logger publishes the stop event, and saves a comparison plot.
+"""
+
+# ROS and plotting imports
 import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Point

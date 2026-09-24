@@ -1,3 +1,11 @@
+"""Generate and log lateral disturbance forces during the landing.
+
+The node uses Gazebo model states and the cropped terrain mesh to estimate
+altitude, publishes four directional disturbance commands, and stops when the
+flight logger announces the end of data collection.
+"""
+
+# ROS, geometry, and plotting imports
 import rclpy
 from rclpy.node import Node
 from rclpy.parameter import Parameter

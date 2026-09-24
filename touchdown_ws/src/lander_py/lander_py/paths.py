@@ -1,3 +1,10 @@
+"""Resolve the workspace and configuration paths used by every simulation node.
+
+The paths can be supplied through environment variables; otherwise the module
+walks upward from its own location until it finds the ROS workspace markers.
+"""
+
+# Standard-library imports
 import os
 from pathlib import Path
 

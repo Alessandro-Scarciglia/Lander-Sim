@@ -1,20 +1,33 @@
+"""Run a fixed number of independent headless simulations for Monte Carlo data.
+
+Each loop iteration assigns reproducible run identifiers, launches the ROS
+world, records success or failure, and leaves the per-run outputs for analysis.
+"""
+
+# Process, timing, and environment imports
 import os
 import subprocess
 import time
+import yaml
 
-# Parameters configuration
-NUM_RUNS = 100             
+# Experiment configuration
 LAUNCH_FILE = 'headless.launch.py'
 
 WORKSPACE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-CONFIG_PATH = os.environ.get('TOUCHDOWN_CONFIG_FILE', os.path.join(WORKSPACE_DIR, "cfg", "simulation.yaml"))
+CONFIG_PATH = os.environ.get('MC_CONFIG_FILE', os.path.join(WORKSPACE_DIR, "cfg", "multiple_simulations.yaml"))
 LAUNCH_FILE_PATH = os.path.join(WORKSPACE_DIR, "launch", LAUNCH_FILE)
+
+with open(CONFIG_PATH, 'r') as config_file:
+    experiment_config = yaml.safe_load(config_file)
+
+NUM_RUNS = int(experiment_config.get('monte_carlo', {}).get('num_runs', 100))
 
 LAUNCH_COMMAND = ['ros2', 'launch', LAUNCH_FILE_PATH]
 
 
 def main():
+    # Execute the requested simulation cycles and collect run statistics.
     print("==================================================================")
     print(f" STARTING AUTOMATED MONTE CARLO ANALYSIS ({NUM_RUNS} RUNS)")
     print("==================================================================")

@@ -1,9 +1,10 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<!-- Python package containing model generators, controllers, and loggers. -->
 <package format="3">
   <name>lander_py</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
+  <description>Model generators, controllers, and loggers for the lander simulation.</description>
   <maintainer email="antoniobiondo1702@gmail.com">antonino1702</maintainer>
   <license>TODO: License declaration</license>
 

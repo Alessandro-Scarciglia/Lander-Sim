@@ -1,9 +1,14 @@
+// Interpolate terrain contact stiffness, damping, and friction by penetration.
+// Shallow contact behaves like dust; deeper contact transitions toward rock.
+
+// Gazebo physics, ROS 2, and standard-library interfaces
 #include <gazebo/gazebo.hh>
 #include <gazebo/physics/physics.hh>
 #include <gazebo/physics/ContactManager.hh> 
 #include <gazebo/physics/Collision.hh>      
 #include <gazebo/physics/ode/ODESurfaceParams.hh> 
 #include <gazebo/common/common.hh>
+#include <algorithm>
 #include <vector>
 #include <string>
 #include <gazebo_ros/node.hpp>
@@ -18,13 +23,13 @@ namespace gazebo
     private: gazebo_ros::Node::SharedPtr ros_node_;
 
     
-    private: double kp_surface = 10000.0;
-    private: double kd_surface = 100.0;
-    private: double mu_surface = 0.5;    
+    private: double kp_surface = 200000.0;
+    private: double kd_surface = 20000.0;
+    private: double mu_surface = 0.65;
    
     private: double kp_rock = 5000000.0;
-    private: double kd_rock = 50000.0;
-    private: double mu_rock = 1;
+    private: double kd_rock = 80000.0;
+    private: double mu_rock = 0.85;
     
     private: double dust_thickness = 0.05; 
 
@@ -71,7 +76,10 @@ namespace gazebo
             }
             if (contact->count > 0) depth /= contact->count;
             
-            double alpha = depth / this->dust_thickness;
+            // A non-positive layer thickness would otherwise create invalid
+            // interpolation and undefined contact parameters.
+            const double effective_thickness = std::max(this->dust_thickness, 1e-6);
+            double alpha = depth / effective_thickness;
             if (alpha > 1.0) alpha = 1.0; 
             if (alpha < 0.0) alpha = 0.0;
             

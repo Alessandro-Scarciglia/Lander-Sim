@@ -1,4 +1,6 @@
 <?xml version="1.0"?>
+<!-- Template for one landing leg, including links, joints, contact sensing,
+     and configurable shock absorbers. generate_legs.py creates leg1-leg4. -->
 <sdf version="1.7">
   <model name="{MODEL_NAME}">
     <static>false</static>
@@ -105,6 +107,69 @@
         </plugin>
       </sensor>
     </link>
+
+    <!-- Sacrificial ground pre-detection probe: 1 m rod below the footpad -->
+    <link name="link_ground_probe_{MODEL_NAME}">
+      <pose relative_to="link_foot">0 0 -0.525 0 0 0</pose>
+      <inertial>
+        <mass>0.02</mass>
+        <inertia>
+          <ixx>0.00167</ixx><iyy>0.00167</iyy><izz>0.000001</izz>
+          <ixy>0</ixy><ixz>0</ixz><iyz>0</iyz>
+        </inertia>
+      </inertial>
+      <collision name="probe_collision_{MODEL_NAME}">
+        <geometry><cylinder><radius>0.003</radius><length>1.0</length></cylinder></geometry>
+      </collision>
+      <visual name="probe_visual_{MODEL_NAME}">
+        <geometry><cylinder><radius>0.003</radius><length>1.0</length></cylinder></geometry>
+        <material><ambient>0.8 0.2 0.1 1</ambient><diffuse>0.8 0.2 0.1 1</diffuse></material>
+      </visual>
+    </link>
+
+    <!-- Contact tip at the lower end of the probe -->
+    <link name="link_probe_tip_{MODEL_NAME}">
+      <pose relative_to="link_ground_probe_{MODEL_NAME}">0 0 -0.5 0 0 0</pose>
+      <inertial>
+        <mass>0.001</mass>
+        <inertia>
+          <ixx>0.0000001</ixx><iyy>0.0000001</iyy><izz>0.0000001</izz>
+          <ixy>0</ixy><ixz>0</ixz><iyz>0</iyz>
+        </inertia>
+      </inertial>
+      <collision name="probe_tip_collision_{MODEL_NAME}">
+        <geometry><sphere><radius>0.01</radius></sphere></geometry>
+        <surface>
+          <contact><ode><kp>100000</kp><kd>10</kd><max_vel>0.01</max_vel><min_depth>0.0001</min_depth></ode></contact>
+        </surface>
+      </collision>
+      <visual name="probe_tip_visual_{MODEL_NAME}">
+        <geometry><sphere><radius>0.01</radius></sphere></geometry>
+        <material><ambient>1 0 0 1</ambient><diffuse>1 0 0 1</diffuse></material>
+      </visual>
+      <sensor name="probe_contact_sensor_{MODEL_NAME}" type="contact">
+        <always_on>true</always_on>
+        <update_rate>200</update_rate>
+        <contact><collision>probe_tip_collision_{MODEL_NAME}</collision></contact>
+        <plugin name="probe_bumper_{MODEL_NAME}" filename="libgazebo_ros_bumper.so">
+          <ros>
+            <remapping>bumper_states:=/lander/{MODEL_NAME}/probe_contact</remapping>
+          </ros>
+          <frame_name>world</frame_name>
+        </plugin>
+      </sensor>
+    </link>
+
+    <!-- Probe attachment -->
+    <joint name="joint_foot_probe_{MODEL_NAME}" type="fixed">
+      <parent>link_foot</parent>
+      <child>link_ground_probe_{MODEL_NAME}</child>
+    </joint>
+
+    <joint name="joint_probe_tip_{MODEL_NAME}" type="fixed">
+      <parent>link_ground_probe_{MODEL_NAME}</parent>
+      <child>link_probe_tip_{MODEL_NAME}</child>
+    </joint>
 
     <joint name="joint_D_C1" type="fixed"><parent>link_D</parent><child>link_C1D</child></joint>
     <joint name="joint_D_C2" type="fixed"><parent>link_D</parent><child>link_C2D</child></joint>

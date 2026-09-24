@@ -1,9 +1,17 @@
+"""Find and plot terrain regions whose slope challenges lander stability.
+
+The analysis ray-casts a height map from the terrain mesh, computes local
+slopes, filters candidate regions, and saves a map of separated target spots.
+"""
+
+# Numerical, mesh, plotting, filtering, and path imports
 import numpy as np
 import trimesh
 import matplotlib.pyplot as plt
 from scipy.ndimage import uniform_filter
 import os
 
+# Terrain analysis and visualization
 def analyze_terrain(mesh_path, lander_radius=2.5, num_challenging_spots=5, min_dist_between_spots=15.0):
     print(f"Loading mesh: {mesh_path}...")
     mesh = trimesh.load(mesh_path)    

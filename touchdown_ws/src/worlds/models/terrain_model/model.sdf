@@ -1,4 +1,6 @@
 <?xml version="1.0"?>
+<!-- Static terrain model definition. The scenario generator replaces the mesh
+  used by the generated world with terrain_cropped.stl. -->
 <sdf version="1.7">
   <model name="terrain_model">
     <static>true</static>

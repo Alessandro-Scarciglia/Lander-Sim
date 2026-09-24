@@ -1,3 +1,5 @@
+<!-- Template for the generated landing world. generate_scenario.py replaces
+  the pose, velocity, terrain-contact, and plugin parameter placeholders. -->
 <sdf version='1.7'>
   <world name='default'>
 
@@ -45,10 +47,10 @@
             <contact>
               <collide_without_contact>0</collide_without_contact>
               <ode>
-                <kp>10000.00000</kp>
-                <kd>1000.00000</kd>
-                <max_vel>0.0</max_vel>
-                <min_depth>0.0</min_depth>
+                <kp>200000.00000</kp>
+                <kd>20000.00000</kd>
+                <max_vel>0.1</max_vel>
+                <min_depth>0.001</min_depth>
               </ode>
             </contact>
             <friction>
@@ -71,9 +73,16 @@
     <!-- Fisica del mondo -->
     <!-- ======================== -->
     <physics type='ode'>
-      <max_step_size>0.001</max_step_size>
+      <max_step_size>0.0005</max_step_size>
       <real_time_factor>1</real_time_factor>
       <real_time_update_rate>0</real_time_update_rate>      
+      <ode>
+        <solver>
+          <type>quick</type>
+          <iters>80</iters>
+          <sor>1.3</sor>
+        </solver>
+      </ode>
     </physics>
     <gravity>0 0 -1.625</gravity>
 
@@ -124,11 +133,11 @@
     <!-- ======================== -->
     <include>
       <uri>model://lander_model</uri>
-      <pose>7.79627 -2.15922 -149.63375 -0.05578 -0.12292 -0.02439</pose> <!-- z=30 per partire sopra il
+      <pose>12.29017 24.17870 -149.80116 0.05152 0.07722 0.04187</pose> <!-- z=30 per partire sopra il
       terreno -->
       <plugin name="initial_velocity_plugin" filename="libInitialVelocityPlugin.so">
-        <linear_velocity>-0.14153 -0.54700 -1.04364</linear_velocity>
-        <angular_velocity>-0.09968 -0.08716 -0.05785</angular_velocity>
+        <linear_velocity>-0.47099 -0.03438 -0.30196</linear_velocity>
+        <angular_velocity>0.02600 0.06997 -0.06751</angular_velocity>
       </plugin>
     </include>
 
@@ -147,12 +156,12 @@
     <!-- ====================================================== -->
     <plugin name="dynamic_terrain" filename="libDynamicTerrainPlugin.so">
       <terrain_name>terrain_model</terrain_name> 
-      <kp_surface>10000.00000</kp_surface>
-      <kp_rock>1000000.00000</kp_rock>
-      <kd_surface>1000.00000</kd_surface> 
-      <kd_rock>10000.00000</kd_rock>
-      <mu_surface>0.50000</mu_surface>
-      <mu_rock>1.00000</mu_rock>
+      <kp_surface>200000.00000</kp_surface>
+      <kp_rock>5000000.00000</kp_rock>
+      <kd_surface>20000.00000</kd_surface> 
+      <kd_rock>80000.00000</kd_rock>
+      <mu_surface>0.65000</mu_surface>
+      <mu_rock>0.85000</mu_rock>
       <dust_thickness>0.05000</dust_thickness>
     </plugin>
 

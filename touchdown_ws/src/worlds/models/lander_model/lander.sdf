@@ -1,4 +1,6 @@
 <?xml version="1.0"?>
+<!-- Template for the assembled lander. generate_legs.py fills the four leg
+  poses and physical values before Gazebo loads this model. -->
 <sdf version="1.7">
   <model name="lander_model">
     <static>false</static>

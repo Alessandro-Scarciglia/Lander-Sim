@@ -1,3 +1,7 @@
+// Subscribe to a thrust topic and apply the commanded force to a Gazebo link.
+// SDF parameters select the link, force direction, application offset, and topic.
+
+// Gazebo, ROS 2, and message interfaces
 #include <gazebo/physics/Model.hh>
 #include <gazebo/physics/Link.hh>
 #include <gazebo/physics/World.hh>

@@ -1,3 +1,6 @@
+"""Create Sobol sensitivity indices and interaction plots from run results."""
+
+# Data, numerical, plotting, sensitivity, and path imports
 import os
 import pandas as pd
 import numpy as np

@@ -1,3 +1,11 @@
+"""Record flight telemetry, detect touchdown, and end a simulation run.
+
+The logger combines model-state telemetry with foot contact forces, publishes
+the touchdown and stop events used by the other nodes, and writes the final
+CSV summary and diagnostic figures during shutdown.
+"""
+
+# ROS, numerical, plotting, and file-output imports
 import rclpy
 from rclpy.node import Node
 from rclpy.parameter import Parameter

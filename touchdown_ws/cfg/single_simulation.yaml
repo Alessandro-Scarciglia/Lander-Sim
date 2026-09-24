@@ -1,0 +1,110 @@
+# Deterministic configuration for one simulation.
+# Values are punctual: no random sampling is performed.
+
+simulation:
+  headless: true
+
+simulation_stop:
+  epsilon: 0.06
+  timeout_after_touchdown: 8.0
+  steady_req_duration: 4.0
+
+body_generation:
+  landing_mass: 3820.0
+  tank_properties:
+    Rcyl: 0.54
+    Lcyl_MON: 1.0152
+    Lcyl_MMH: 0.8789
+    Hdome: 0.4611
+    pos_tank_1: [0.895, -0.895, 2.06025]
+    pos_tank_2: [-0.895, -0.895, 2.1284]
+    pos_tank_3: [0.895, 0.895, 2.1284]
+    pos_tank_4: [-0.895, 0.895, 2.06025]
+    rho_MMH: 874.9
+    rho_MON: 1444.4
+    ratio_MON_MMH: 1.82
+    epsilon_body: 1e-9
+  dry_scenarios:
+    - mass: 2020.0
+      cog: [-0.006, 0.075, 1.0]
+      I: [[4751.4, -97.3, 35.8], [-97.3, 4670.6, -246.2], [35.8, -246.2, 3502.4]]
+  passenger_scenarios:
+    - mass: 1500.0
+      cog: [0.0, 0.0, 0.5]
+      I: [[1750.0, 0.0, 0.0], [0.0, 1750.0, 0.0], [0.0, 0.0, 2750.0]]
+
+terrain:
+  mesh_file: terrain_col_light.stl
+  crop_radius: 25.0
+
+landing_scenario:
+  pos_x: 0.0
+  pos_y: 0.0
+  altitude: 0.255
+  roll_deg: 0.0
+  pitch_deg: 0.0
+  yaw_deg: 0.0
+  vel_x: 0.0
+  vel_y: 0.0
+  vel_z: -1.1
+  ang_x_deg_s: 0.0
+  ang_y_deg_s: 0.0
+  ang_z_deg_s: 0.0
+  kp_surface: 200000.0
+  kp_rock: 5000000.0
+  kd_surface: 20000.0
+  kd_rock: 80000.0
+  dust_thickness: 0.05
+  mu_surface: 0.65
+  mu_rock: 0.85
+
+thrusters:
+  num_engines: 2
+  t_min: 3000.0
+  t_max: 6000.0
+  engine_max_thrust: 6000.0
+  lunar_gravity: 1.625
+
+leg_generation:
+  truss_mass: 15.0
+  truss_radius: 0.04
+  point_D: [0.4, 0.4, 0.45]
+  point_F: [0.8, 0.4, -1.2]
+  point_B1: [0.0, -0.2, 0.3]
+  point_B2: [0.0, 1.0, 0.3]
+  base_points:
+    C1: [0.0, 0.0, 0.0]
+    C2: [0.0, 0.8, 0.0]
+    A1: [0.0, 0.2, 1.0]
+    A2: [0.0, 0.6, 1.0]
+  strut_DF_mass: 15.0
+  strut_DF_radius: 0.05
+  piston_DF_mass: 10.0
+  piston_DF_radius: 0.035
+  b_strut_mass: 15.0
+  b_strut_radius: 0.05
+  b_piston_mass: 10.0
+  b_piston_radius: 0.035
+  mass_D: 10.0
+  mass_E: 10.0
+  mass_foot: 5.0
+  df_k: 72500.0
+  df_c: 24000.0
+  df_fric: 0.0
+  df_limit: 0.95
+  df_crush_force_stage1: 6500.0
+  df_crush_force_stage2: 19000.0
+  df_stroke_limit_stage_1: 0.4
+  df_stroke_limit_stage_2: 0.9
+  df_bottomout_stiffness: 12000000.0
+  df_rebound_damping: 14000.0
+  b_k: 3000000.0
+  b_c: 125000.0
+  b_fric: 0.0
+  b_limit: 0.4
+  be_crush_force: 3000000.0
+  be_rebound_damping: 100000.0
+  foot_k: 240.0
+  foot_c: 24.0
+  octagon_radius: 2.0
+  z_legs: 0.05

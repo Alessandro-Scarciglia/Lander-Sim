@@ -1,3 +1,10 @@
+"""Record commanded engine thrust and calculate thrust at touchdown.
+
+The logger listens to all main-engine commands and timing events, publishes
+the impact-thrust value consumed by the flight logger, and saves a thrust plot.
+"""
+
+# ROS and plotting imports
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Float64, Bool

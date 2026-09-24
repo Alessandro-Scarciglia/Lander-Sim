@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Run the ROS Python formatting checker for the lander_py package."""
+
+# Test framework and linter imports
 from ament_flake8.main import main_with_errors
 import pytest
 

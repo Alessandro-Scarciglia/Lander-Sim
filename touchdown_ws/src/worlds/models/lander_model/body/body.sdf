@@ -1,4 +1,6 @@
 <?xml version="1.0"?>
+<!-- Template for the generated body link. generate_body.py fills mass,
+     center-of-gravity, inertia, and visual/collision values. -->
 <sdf version="1.7">
   <model name="body">
     <static>false</static>
@@ -9,18 +11,18 @@
 
       <!-- ================= INERTIAL ================= -->
       <inertial>
-        <mass>2248.39163</mass>
+        <mass>2447.81776</mass>
 
         <!-- CoG -->
-        <pose>0.01384 0.09388 1.29881 0 0 0</pose>
+        <pose>0.01271 0.08624 1.29787 0 0 0</pose>
 
         <inertia>
-          <ixx>5486.01853</ixx>
-          <iyy>5392.88825</iyy>
-          <izz>4070.86053</izz>
-          <ixy>-64.58188</ixy>
-          <ixz>50.06299</ixz>
-          <iyz>-147.95117</iyz>
+          <ixx>5653.71396</ixx>
+          <iyy>5559.00414</iyy>
+          <izz>4404.17720</izz>
+          <ixy>-111.27059</ixy>
+          <ixz>50.03367</ixz>
+          <iyz>-148.15008</iyz>
         </inertia>
       </inertial>
 
@@ -81,8 +83,8 @@
         <surface>
           <contact>
             <ode>
-              <kp>100000000.0</kp>
-              <kd>100000.0</kd>
+              <kp>50000000.0</kp>
+              <kd>200000.0</kd>
               <max_vel>0.1</max_vel>
               <min_depth>0.01</min_depth>
             </ode>
@@ -192,6 +194,6 @@
 </sdf>
 <!-- METADATA_DRY_MASS: 2222.00000 -->
 
-<!-- METADATA_WET_MASS: 2248.39163 -->
-<!-- METADATA_BODY_COG: 0.01383567;0.09388489;1.29881012 -->
-<!-- METADATA_BODY_INERTIA: 5486.01852674;-64.58188369;50.06298509;-64.58188369;5392.88825016;-147.95117259;50.06298509;-147.95117259;4070.86052882 -->
+<!-- METADATA_WET_MASS: 2447.81776 -->
+<!-- METADATA_BODY_COG: 0.01270846;0.08623599;1.29786783 -->
+<!-- METADATA_BODY_INERTIA: 5653.71396081;-111.27059243;50.03367257;-111.27059243;5559.00414412;-148.15007901;50.03367257;-148.15007901;4404.17719596 -->

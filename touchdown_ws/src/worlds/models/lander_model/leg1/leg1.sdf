@@ -1,4 +1,6 @@
 <?xml version="1.0"?>
+<!-- Template for one landing leg, including links, joints, contact sensing,
+     and configurable shock absorbers. generate_legs.py creates leg1-leg4. -->
 <sdf version="1.7">
   <model name="leg1">
     <static>false</static>
@@ -106,6 +108,69 @@
       </sensor>
     </link>
 
+    <!-- Sacrificial ground pre-detection probe: 1 m rod below the footpad -->
+    <link name="link_ground_probe_leg1">
+      <pose relative_to="link_foot">0 0 -0.525 0 0 0</pose>
+      <inertial>
+        <mass>0.02</mass>
+        <inertia>
+          <ixx>0.00167</ixx><iyy>0.00167</iyy><izz>0.000001</izz>
+          <ixy>0</ixy><ixz>0</ixz><iyz>0</iyz>
+        </inertia>
+      </inertial>
+      <collision name="probe_collision_leg1">
+        <geometry><cylinder><radius>0.003</radius><length>1.0</length></cylinder></geometry>
+      </collision>
+      <visual name="probe_visual_leg1">
+        <geometry><cylinder><radius>0.003</radius><length>1.0</length></cylinder></geometry>
+        <material><ambient>0.8 0.2 0.1 1</ambient><diffuse>0.8 0.2 0.1 1</diffuse></material>
+      </visual>
+    </link>
+
+    <!-- Contact tip at the lower end of the probe -->
+    <link name="link_probe_tip_leg1">
+      <pose relative_to="link_ground_probe_leg1">0 0 -0.5 0 0 0</pose>
+      <inertial>
+        <mass>0.001</mass>
+        <inertia>
+          <ixx>0.0000001</ixx><iyy>0.0000001</iyy><izz>0.0000001</izz>
+          <ixy>0</ixy><ixz>0</ixz><iyz>0</iyz>
+        </inertia>
+      </inertial>
+      <collision name="probe_tip_collision_leg1">
+        <geometry><sphere><radius>0.01</radius></sphere></geometry>
+        <surface>
+          <contact><ode><kp>100000</kp><kd>10</kd><max_vel>0.01</max_vel><min_depth>0.0001</min_depth></ode></contact>
+        </surface>
+      </collision>
+      <visual name="probe_tip_visual_leg1">
+        <geometry><sphere><radius>0.01</radius></sphere></geometry>
+        <material><ambient>1 0 0 1</ambient><diffuse>1 0 0 1</diffuse></material>
+      </visual>
+      <sensor name="probe_contact_sensor_leg1" type="contact">
+        <always_on>true</always_on>
+        <update_rate>200</update_rate>
+        <contact><collision>probe_tip_collision_leg1</collision></contact>
+        <plugin name="probe_bumper_leg1" filename="libgazebo_ros_bumper.so">
+          <ros>
+            <remapping>bumper_states:=/lander/leg1/probe_contact</remapping>
+          </ros>
+          <frame_name>world</frame_name>
+        </plugin>
+      </sensor>
+    </link>
+
+    <!-- Probe attachment -->
+    <joint name="joint_foot_probe_leg1" type="fixed">
+      <parent>link_foot</parent>
+      <child>link_ground_probe_leg1</child>
+    </joint>
+
+    <joint name="joint_probe_tip_leg1" type="fixed">
+      <parent>link_ground_probe_leg1</parent>
+      <child>link_probe_tip_leg1</child>
+    </joint>
+
     <joint name="joint_D_C1" type="fixed"><parent>link_D</parent><child>link_C1D</child></joint>
     <joint name="joint_D_C2" type="fixed"><parent>link_D</parent><child>link_C2D</child></joint>
     <joint name="joint_D_A1" type="fixed"><parent>link_D</parent><child>link_A1D</child></joint>
@@ -132,12 +197,12 @@
       <axis>
         <xyz>0 1 0</xyz>
         <limit><lower>-0.52</lower><upper>0.52</upper></limit>
-        <dynamics><spring_reference>0.0</spring_reference><spring_stiffness>184.2</spring_stiffness><damping>22.3</damping></dynamics>
+        <dynamics><spring_reference>0.0</spring_reference><spring_stiffness>254.7</spring_stiffness><damping>26.9</damping></dynamics>
       </axis>
       <axis2>
         <xyz>1 0 0</xyz>
         <limit><lower>-0.52</lower><upper>0.52</upper></limit>
-        <dynamics><spring_reference>0.0</spring_reference><spring_stiffness>184.2</spring_stiffness><damping>22.3</damping></dynamics>
+        <dynamics><spring_reference>0.0</spring_reference><spring_stiffness>254.7</spring_stiffness><damping>26.9</damping></dynamics>
       </axis2>
     </joint>
 
@@ -174,14 +239,14 @@
       <topic_name>leg1/df_force_displacement</topic_name>
       <joint_name>shock_absorber_DF</joint_name>
       <dual_stage>true</dual_stage>
-      <stiffness>68198.7</stiffness>
-      <damping>29569.1</damping>
-      <crush_force_stage_1>3165.4</crush_force_stage_1>
+      <stiffness>86531.5</stiffness>
+      <damping>19358.5</damping>
+      <crush_force_stage_1>7830.1</crush_force_stage_1>
       <stroke_limit_stage_1>0.400</stroke_limit_stage_1>
-      <crush_force_stage_2>17528.2</crush_force_stage_2>
+      <crush_force_stage_2>20191.8</crush_force_stage_2>
       <total_stroke_limit>0.900</total_stroke_limit>
-      <rebound_damping>15184.6</rebound_damping>
-      <bottomout_stiffness>8711493.9</bottomout_stiffness>
+      <rebound_damping>13725.0</rebound_damping>
+      <bottomout_stiffness>9174031.4</bottomout_stiffness>
       <compression_dir>1.0</compression_dir>
     </plugin>
 
@@ -189,10 +254,10 @@
       <ros><namespace>/lander</namespace></ros>
       <topic_name>leg1/b1_force_displacement</topic_name>
       <joint_name>joint_B1_prismatic</joint_name>
-      <crush_force>6727.7</crush_force>
-      <stiffness>120410.6</stiffness>
-      <damping>32135.3</damping>
-      <rebound_damping>15658.5</rebound_damping>
+      <crush_force>4180774.3</crush_force>
+      <stiffness>3959594.3</stiffness>
+      <damping>188348.7</damping>
+      <rebound_damping>144245.0</rebound_damping>
       <compression_dir>1.0</compression_dir>
       <bidirectional>true</bidirectional>
       <dual_stage>false</dual_stage>
@@ -202,10 +267,10 @@
       <ros><namespace>/lander</namespace></ros>
       <topic_name>leg1/b2_force_displacement</topic_name>
       <joint_name>joint_B2_prismatic</joint_name>
-      <crush_force>6727.7</crush_force>
-      <rebound_damping>15658.5</rebound_damping>
-      <stiffness>120410.6</stiffness>
-      <damping>32135.3</damping>
+      <crush_force>4180774.3</crush_force>
+      <rebound_damping>144245.0</rebound_damping>
+      <stiffness>3959594.3</stiffness>
+      <damping>188348.7</damping>
       <compression_dir>1.0</compression_dir>
       <bidirectional>true</bidirectional>
       <dual_stage>false</dual_stage>
@@ -213,7 +278,7 @@
 
   </model>
 </sdf>
-<!-- METADATA_LEG_PARAMS: foot_k=184.21; foot_c=22.31; be_crush_force=6727.66; be_rebound_damping=15658.55; b_k=120410.61; b_c=32135.33; df_bottomout_stiffness=8711493.94; df_rebound_damping=15184.57; df_crush_force_stage1=3165.39; df_crush_force_stage2=17528.25; df_k=68198.71; df_c=29569.11 -->
+<!-- METADATA_LEG_PARAMS: foot_k=254.75; foot_c=26.9; be_crush_force=4180774.26; be_rebound_damping=144245.03; b_k=3959594.3; b_c=188348.75; df_bottomout_stiffness=9174031.37; df_rebound_damping=13724.98; df_crush_force_stage1=7830.07; df_crush_force_stage2=20191.8; df_k=86531.52; df_c=19358.47 -->
 
 <!-- METADATA_LEG_PROPERTIES:
 mass=160.0000

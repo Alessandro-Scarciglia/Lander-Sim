@@ -1,4 +1,6 @@
 <?xml version="1.0" ?>
+<!-- Template for the generated passenger payload link. generate_body.py fills
+  its selected mass, center of gravity, and inertia. -->
 <sdf version="1.7">
   <model name="passenger">
     <link name="passenger_link">

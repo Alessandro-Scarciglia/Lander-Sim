@@ -1,17 +1,18 @@
-version: "3.8"
 
 services:
   touchdown-sim:
     build: .
     container_name: touchdown-sim
-    network_mode: "host"  # necessario per Gazebo GUI
+
     environment:
-      - DISPLAY=${DISPLAY:-host.docker.internal:0.0}
+      - DISPLAY=host.docker.internal:0.0
       - QT_X11_NO_MITSHM=1
       - GAZEBO_MODEL_PATH=/workspace/touchdown_ws/src/worlds/models
+      - GAZEBO_PLUGIN_PATH=/workspace/touchdown_ws/install/lander_sim/lib/lander_sim
+
     volumes:
-      - /tmp/.X11-unix:/tmp/.X11-unix  # GUI forwarding
       - ./touchdown_ws:/workspace/touchdown_ws
-      - ./CAD:/workspace/CAD               # Optional local CAD input directory
+      - ./CAD:/workspace/CAD
+
     privileged: true
     tty: true

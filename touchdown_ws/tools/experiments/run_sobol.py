@@ -1,3 +1,10 @@
+"""Generate and execute Sobol sensitivity-analysis simulations.
+
+The script creates Sobol samples from the configured parameter bounds, runs a
+simulation for each sample, and records results for the Sobol analysis tools.
+"""
+
+# Process, configuration, and sensitivity-analysis imports
 import os
 import subprocess
 import time
@@ -5,6 +12,7 @@ import yaml
 import copy
 from SALib.sample import sobol
 
+# Sensitivity problem definition
 problem = {
     'num_vars': 13, 
     'names': [

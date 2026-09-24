@@ -1,3 +1,11 @@
+"""Launch the interactive Gazebo version of the landing simulation.
+
+This file follows the same generation and node startup sequence as the
+headless launcher, but uses Gazebo's GUI launch file and keeps physics paused
+until the user starts it from the Gazebo interface.
+"""
+
+# Launch, process, and ROS action imports
 import os
 import subprocess
 from launch import LaunchDescription
@@ -8,6 +16,7 @@ from ament_index_python.packages import get_package_share_directory
 from launch.events import Shutdown
 
 def generate_launch_description():
+    # Generate the model and scenario inputs before Gazebo reads them.
     SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
     WS_ROOT = os.path.dirname(SCRIPT_DIR)
     os.environ.setdefault('TOUCHDOWN_WS_ROOT', WS_ROOT)
@@ -21,7 +30,7 @@ def generate_launch_description():
     
     print("\n[LAUNCH] >>> Generation complete! Starting Gazebo and nodes.... <<<\n")
 
-    # Starting Gazebo
+    # Start Gazebo with its interactive GUI.
     gazebo_pkg = get_package_share_directory('gazebo_ros')
     
     WORLD_DIR = os.path.join(WS_ROOT, "src", "worlds")
@@ -31,11 +40,11 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(os.path.join(gazebo_pkg, 'launch', 'gazebo.launch.py')),
         launch_arguments={
             'world': world_path,
-            'pause': 'false'
+            'pause': 'true'
         }.items()
     )
 
-    # Starting ROS 2 nodes
+    # Define the runtime controllers and logging nodes.
     
     thrusters_node = Node(
         package='lander_py',

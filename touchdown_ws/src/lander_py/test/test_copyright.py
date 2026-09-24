@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Verify source-file copyright headers when the package enables the check."""
+
+# Test framework and linter imports
 from ament_copyright.main import main
 import pytest
 

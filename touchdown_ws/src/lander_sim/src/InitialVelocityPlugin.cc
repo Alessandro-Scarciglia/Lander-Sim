@@ -1,3 +1,7 @@
+// Apply the randomized initial linear and angular velocity to the lander.
+// Values come from the generated world SDF and are reapplied after a reset.
+
+// Gazebo, ROS 2, and vector interfaces
 #include <gazebo/physics/Model.hh>
 #include <gazebo/physics/World.hh>
 #include <gazebo/common/Plugin.hh>

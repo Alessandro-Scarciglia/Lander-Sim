@@ -1,3 +1,6 @@
+"""Analyze rollover-related simulation results and generate comparison plots."""
+
+# Data, numerical, plotting, and path imports
 import os
 import pandas as pd
 import numpy as np
