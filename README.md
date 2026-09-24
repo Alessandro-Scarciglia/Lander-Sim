@@ -39,6 +39,10 @@ colcon build
 source install/setup.bash
 ```
 
+The files in `touchdown_ws/scripts/` are Linux shell scripts for the ROS
+container. Do not run them directly from Windows PowerShell. From the Windows
+repository root, run them through Docker with `docker compose exec`.
+
 The repository uses the following simulation folders:
 
 ```text
@@ -67,11 +71,30 @@ cd /workspace/touchdown_ws
 bash scripts/run_single_simulation.sh
 ```
 
+Equivalent command from Windows PowerShell:
+
+```powershell
+docker compose exec touchdown-sim bash -lc "bash /workspace/touchdown_ws/scripts/run_single_simulation.sh"
+```
+
 The GUI launch file is available when display forwarding is configured:
 
 ```bash
 ros2 launch /workspace/touchdown_ws/launch/simulation.launch.py
 ```
+
+For Docker Desktop on Windows, install and start VcXsrv or Xming with display
+number `0` and access control disabled, then run this from the repository root:
+
+```powershell
+docker compose build
+docker compose up -d
+docker compose exec touchdown-sim bash -lc "bash /workspace/touchdown_ws/scripts/run_gui_simulation.sh"
+```
+
+Compose defaults `DISPLAY` to `host.docker.internal:0.0`, so PowerShell does
+not need a manually configured `DISPLAY` variable. The GUI launch starts the
+simulation immediately; Gazebo's Play button is not required.
 
 ## Monte Carlo simulation
 
@@ -81,6 +104,12 @@ of independent simulations, and appends one CSV row per completed run.
 ```bash
 cd /workspace/touchdown_ws
 bash scripts/run_monte_carlo.sh
+```
+
+From Windows PowerShell:
+
+```powershell
+docker compose exec touchdown-sim bash -lc "bash /workspace/touchdown_ws/scripts/run_monte_carlo.sh"
 ```
 
 Output:
@@ -104,6 +133,12 @@ cd /workspace/touchdown_ws
 bash scripts/run_morris.sh
 ```
 
+From Windows PowerShell:
+
+```powershell
+docker compose exec touchdown-sim bash -lc "bash /workspace/touchdown_ws/scripts/run_morris.sh"
+```
+
 The simulation rows are written to:
 
 ```text
@@ -123,6 +158,12 @@ sequentially.
 ```bash
 cd /workspace/touchdown_ws
 bash scripts/run_sobol.sh
+```
+
+From Windows PowerShell:
+
+```powershell
+docker compose exec touchdown-sim bash -lc "bash /workspace/touchdown_ws/scripts/run_sobol.sh"
 ```
 
 The simulation rows are written to:

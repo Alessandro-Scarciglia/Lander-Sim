@@ -31,7 +31,7 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(os.path.join(gazebo_pkg, 'launch', 'gazebo.launch.py')),
         launch_arguments={
             'world': world_path,
-            'pause': 'true'
+            'pause': 'false'
         }.items()
     )
 
