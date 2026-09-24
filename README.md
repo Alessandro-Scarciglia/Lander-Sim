@@ -219,6 +219,12 @@ Telemetry and touchdown results are written under:
 touchdown_ws/data/results/
 ```
 
+The single-run CSV is named with its timestamp:
+
+```text
+single_run_YYYYMMDD_HHMMSS.csv
+```
+
 Generated figures are stored under `touchdown_ws/figures/` when enabled.
 
 ## Run Monte Carlo
@@ -256,10 +262,12 @@ MONTE CARLO ORCHESTRATOR COMPLETED!
 Total scheduled runs: 5
 ```
 
-Results are written to:
+The complete Monte Carlo batch writes one timestamped CSV. Each simulation is
+one row in that file:
 
 ```text
-touchdown_ws/data/results/montecarlo_summary.csv
+montecarlo_run_5_YYYYMMDD_HHMMSS.csv
+...
 ```
 
 Additional generated logs and figures remain in `data/` and `figures/`.

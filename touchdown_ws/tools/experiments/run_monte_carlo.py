@@ -9,6 +9,7 @@ import os
 import subprocess
 import time
 import yaml
+from datetime import datetime
 
 # Experiment configuration
 LAUNCH_FILE = 'headless.launch.py'
@@ -22,6 +23,8 @@ with open(CONFIG_PATH, 'r') as config_file:
     experiment_config = yaml.safe_load(config_file)
 
 NUM_RUNS = int(experiment_config.get('monte_carlo', {}).get('num_runs', 100))
+BATCH_TIMESTAMP = datetime.now().strftime('%Y%m%d_%H%M%S')
+BATCH_OUTPUT_STEM = f"montecarlo_run_{NUM_RUNS}_{BATCH_TIMESTAMP}"
 
 LAUNCH_COMMAND = ['ros2', 'launch', LAUNCH_FILE_PATH]
 
@@ -32,11 +35,13 @@ def main():
     print(f" STARTING AUTOMATED MONTE CARLO ANALYSIS ({NUM_RUNS} RUNS)")
     print("==================================================================")
     print(f" Config Path: {CONFIG_PATH}")
+    print(f" Output File: {BATCH_OUTPUT_STEM}.csv")
     print(f" Launch Command: {' '.join(LAUNCH_COMMAND)}")
     print("==================================================================")
 
     os.environ['MC_ENABLE_PLOTS'] = 'False'
     os.environ['TOUCHDOWN_WS_ROOT'] = WORKSPACE_DIR
+    os.environ['MC_OUTPUT_STEM'] = BATCH_OUTPUT_STEM
 
     statistics = {"successes": 0, "failures": 0}
     absolute_start_time = time.time()

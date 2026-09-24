@@ -4,7 +4,7 @@ simulation:
   headless: true
 
 monte_carlo:
-  num_runs: 5
+  num_runs: 2
 
 simulation_stop:
   epsilon: 0.06

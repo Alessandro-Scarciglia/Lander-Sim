@@ -20,6 +20,7 @@ import signal
 import os
 import yaml
 import csv
+from datetime import datetime
 from std_msgs.msg import Float64
 import numpy as np
 import trimesh
@@ -40,6 +41,21 @@ class FlightDataLogger(Node):
         self.results_dir = os.path.join(self.ws_root, "data", "results")
         os.makedirs(self.plots_dir, exist_ok=True)
         os.makedirs(self.results_dir, exist_ok=True)
+        self.output_timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        monte_carlo_id = os.environ.get('MC_RUN_ID')
+        monte_carlo_output_stem = os.environ.get('MC_OUTPUT_STEM')
+        if monte_carlo_id is not None:
+            self.output_run_id = f"montecarlo_run_{int(monte_carlo_id):03d}"
+        else:
+            self.output_run_id = f"single_run_{self.output_timestamp}"
+        if monte_carlo_id is not None and monte_carlo_output_stem:
+            self.output_stem = monte_carlo_output_stem
+        elif monte_carlo_id is not None:
+            self.output_stem = f"{self.output_run_id}_{self.output_timestamp}"
+        else:
+            self.output_stem = self.output_run_id
+        self.output_path = os.path.join(self.results_dir, f"{self.output_stem}.csv")
+        self.get_logger().info(f"Simulation result file: {self.output_path}")
 
         try:
             with open(CONFIG_PATH, 'r') as file:
@@ -584,8 +600,8 @@ def main(args=None):
             # First leg to touch the ground
             first_leg = node.first_leg_touch if node.first_leg_touch else "None"
 
-            # Retrieve the id from Environment Variable
-            run_id = os.environ.get('MC_RUN_ID', 'Manual_Test')                     
+            # Give every simulation its own timestamped result file.
+            run_id = node.output_run_id
             
             # Max. leg force
             max_leg_force = 0.0
@@ -715,8 +731,8 @@ def main(args=None):
                 flag_thruster_crash = True         
             
 
-            # Append to CSV file
-            csv_path = os.path.join(node.results_dir, "montecarlo_summary.csv")
+            # Save one independent CSV per simulation; never mix run types.
+            csv_path = node.output_path
             file_exists = os.path.isfile(csv_path)
 
             with open(csv_path, mode='a', newline='') as f:
@@ -757,7 +773,16 @@ def main(args=None):
                     round(gazebo_mass, 2), round(mass_error_kg, 2), round(mass_error_pct, 2) 
                 ])
             
-            print(f"Mission outcome for Run {run_id} saved to montecarlo_summary.csv")    
+            print(f"Mission outcome for Run {run_id} saved to {os.path.basename(csv_path)}")
+
+        if not t_tel:
+            file_exists = os.path.isfile(node.output_path)
+            with open(node.output_path, mode='a', newline='') as f:
+                writer = csv.writer(f)
+                if not file_exists:
+                    writer.writerow(['run_id', 'status', 'reason'])
+                writer.writerow([node.output_run_id, 'incomplete', 'No telemetry received from /gazebo/model_states'])
+            print(f"No telemetry received; diagnostic result saved to {node.output_path}")
         
         
         # Plot generation
